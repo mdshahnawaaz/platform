@@ -82,6 +82,14 @@ Communication Protocol: Server-Sent Events (SSE)
 
 High-Level Design
 
+ER Diagram
+![WhatsApp Image 2024-10-18 at 5 22 11 PM](https://github.com/user-attachments/assets/c8a79fe4-9057-48b7-9adc-0f95c0e5031a)
+
+Architectural Diagram
+
+![Blank diagram](https://github.com/user-attachments/assets/8cd125bc-7d1e-4708-b9dd-d3365e545767)
+
+
 Assumptions
 
 	1.	Drivers cannot cancel requests once received.
