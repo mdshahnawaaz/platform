@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thyme Leaf Driver Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .profile-picture {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-right: 20px;
+            background-color: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" th:if="${not #lists.isEmpty(bookings)}">
+        <div class="profile-header">
+            <div class="profile-picture" th:text="${#strings.substring(bookings[0].driver.name, 0, 1).toUpperCase()}"></div>
+            <h1 th:text="${bookings[0].driver.name}">Driver Name</h1>
+        </div>
+        
+        <h2>Driver Details</h2>
+        <p><strong>ID:</strong> <span th:text="${bookings[0].driver.id}"></span></p>
+        <p><strong>License:</strong> <span th:text="${bookings[0].driver.licenseNumber}"></span></p>
+        <p><strong>Vehicle Type:</strong> <span th:text="${bookings[0].driver.vehicleType}"></span></p>
+        <p><strong>Vehicle Number:</strong> <span th:text="${bookings[0].driver.vehicleNumber}"></span></p>
+        
+        <h2>Performance</h2>
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" th:text="${bookings[0].driver.rating}">Rating</div>
+                <div>Rating</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" th:text="${bookings[0].driver.available ? 'Available' : 'Unavailable'}">Availability</div>
+                <div>Status</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" th:text="${#lists.size(bookings)}">Total Bookings</div>
+                <div>Bookings</div>
+            </div>
+        </div>
+        
+        <h2>Current Bookings</h2>
+        <table>
+            <tr>
+                <th>Booking ID</th>
+                <th>Pickup</th>
+                <th>Dropoff</th>
+                <th>Estimated Cost</th>
+                <th>Status</th>
+                <th>Created At</th>
+            </tr>
+            <tr th:each="booking : ${bookings}" th:if="${booking.status == 'PENDING'}">
+                <td th:text="${booking.id}"></td>
+                <td th:text="${booking.pickuplat + ', ' + booking.pickuplon}"></td>
+                <td th:text="${booking.dropoffLat + ', ' + booking.dropoffLon}"></td>
+                <td th:text="${#numbers.formatDecimal(booking.estimatedCost, 1, 2)}"></td>
+                <td th:text="${booking.status}"></td>
+                <td th:text="${#temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+            </tr>
+        </table>
+        
+        <h2>Past Bookings</h2>
+        <table>
+            <tr>
+                <th>Booking ID</th>
+                <th>Pickup</th>
+                <th>Dropoff</th>
+                <th>Estimated Cost</th>
+                <th>Status</th>
+                <th>Created At</th>
+            </tr>
+            <tr th:each="booking : ${bookings}" th:if="${booking.status != 'PENDING'}">
+                <td th:text="${booking.id}"></td>
+                <td th:text="${booking.pickuplat + ', ' + booking.pickuplon}"></td>
+                <td th:text="${booking.dropoffLat + ', ' + booking.dropoffLon}"></td>
+                <td th:text="${#numbers.formatDecimal(booking.estimatedCost, 1, 2)}"></td>
+                <td th:text="${booking.status}"></td>
+                <td th:text="${#temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+            </tr>
+        </table>
+    </div>
+    <div th:if="${#lists.isEmpty(bookings)}">
+        <h2>No bookings found for this driver.</h2>
+    </div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Driver Details</title>
+    <style>
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        .btn {
+            background-color: #3490dc;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #2779bd;
+        }
+        .billing-details {
+            margin-top: 20px;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<div class="card">
+    <h2 class="text-2xl font-bold mb-4" th:text="'Driver Details for ID ' + ${driverId}"></h2>
+    <p><strong>Name : </strong> <span th:text="${driver_name}">John Doe</span></p>
+    <p><strong>Vehicle : </strong> <span th:text="${driver_vehicleType}">Toyota Prius</span></p>
+    <p><strong>Rating : </strong> <span th:text="${driver_rating}">4.8</span></p>
+     
+    <div class="flex justify-around mt-6">
+        <button class="btn" onclick="showBillingDetails()">Price : <span th:text="${estimate_price}">$50.00</span></button>
+        <button class="btn" onclick="estimateTime()">Estimate Time</button>
+        <button class="btn" onclick="trackDriver()">Track Driver</button>
+    </div>
+
+    <!-- Billing details section -->
+    <div id="billingDetails" class="billing-details" style="display:none;">
+        <p><strong>Actual Cost:</strong> $40.00</p>
+        <p><strong>Platform Charge:</strong> $10.00</p>
+        <p><strong>Total Amount:</strong> $50.00</p>
+    </div>
+
+    <!-- Placeholder for estimate and tracking scripts -->
+    <script>
+        function showBillingDetails() {
+            const billingDetails = document.getElementById('billingDetails');
+            billingDetails.style.display = 'block';
+        }
+
+        function estimateTime() {
+            alert('Estimating time...');
+            // Implement the logic to fetch and display estimated time
+        }
+
+        function trackDriver() {
+            alert('Tracking driver...');
+            // Implement the logic to track driver
+        }
+    </script>
+</div>
+
+</body>
+</html>

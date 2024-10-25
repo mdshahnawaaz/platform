@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ride Estimation and Booking</title>
+    <script>
+        function getEstimate() {
+            const pickupLat = document.getElementById('pickupLatitude').value;
+            const pickupLon = document.getElementById('pickupLongitude').value;
+            const dropoffLat = document.getElementById('dropoffLatitude').value;
+            const dropoffLon = document.getElementById('dropoffLongitude').value;
+            const vehicleType = document.getElementById('vehicleType').value;
+
+            fetch(`/logistics/pricing/estimate?pickupLat=${pickupLat}&pickupLon=${pickupLon}&dropoffLat=${dropoffLat}&dropoffLon=${dropoffLon}&vehicleType=${vehicleType}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('estimatedPrice').innerText = `Estimated Price: $${data}`;
+                    document.getElementById('priceInput').value = data; // Set hidden input value for booking
+                })
+                .catch(error => console.error('Error fetching estimate:', error));
+        }
+    </script>
+</head>
+<body>
+    <h1>Estimate Ride Price</h1>
+    <form id="estimateForm">
+        <div>
+            <label for="pickupLatitude">Pickup Latitude:</label>
+            <input type="text" id="pickupLatitude" required/>
+        </div>
+        <div>
+            <label for="pickupLongitude">Pickup Longitude:</label>
+            <input type="text" id="pickupLongitude" required/>
+        </div>
+        <div>
+            <label for="dropoffLatitude">Drop-off Latitude:</label>
+            <input type="text" id="dropoffLatitude" required/>
+        </div>
+        <div>
+            <label for="dropoffLongitude">Drop-off Longitude:</label>
+            <input type="text" id="dropoffLongitude" required/>
+        </div>
+        <div>
+            <label for="vehicleType">Vehicle Type:</label>
+            <select id="vehicleType">
+                <option value="car">Car</option>
+                <option value="van">Van</option>
+                <!-- Add more vehicle types as needed -->
+            </select>
+        </div>
+        <button type="button" onclick="getEstimate()">Get Estimate</button>
+    </form>
+
+    <!-- Display estimated price -->
+    <div id="estimatedPrice"></div>
+
+    <!-- Booking form -->
+    <form th:action="@{/logistics/bookings}" method="post">
+        <!-- Hidden fields to pass data to booking endpoint -->
+        <input type="hidden" name="userId" value="1"/>
+        <input type="hidden" name="pickupLat" id="hiddenPickupLat"/>
+        <input type="hidden" name="pickupLon" id="hiddenPickupLon"/>
+        <input type="hidden" name="dropoffLat" id="hiddenDropoffLat"/>
+        <input type="hidden" name="dropoffLon" id="hiddenDropoffLon"/>
+        <input type="hidden" name="vehicleType" id="hiddenVehicleType"/>
+        <!-- Hidden input for estimated price -->
+        <input type="hidden" id="priceInput" name="estimatedPrice"/>
+        <!-- Submit button for booking -->
+        <button type="submit">Book Ride</button>
+    </form>
+
+    <!-- Script to copy values from estimate form to booking form -->
+    <script>
+        document.getElementById("estimateForm").addEventListener("submit", function() {
+            document.getElementById("hiddenPickupLat").value = document.getElementById("pickupLatitude").value;
+            document.getElementById("hiddenPickupLon").value = document.getElementById("pickupLongitude").value;
+            document.getElementById("hiddenDropoffLat").value = document.getElementById("dropoffLatitude").value;
+            document.getElementById("hiddenDropoffLon").value = document.getElementById("dropoffLongitude").value;
+            document.getElementById("hiddenVehicleType").value = document.getElementById("vehicleType").value;
+        });
+    </script>
+
+</body>
+</html>

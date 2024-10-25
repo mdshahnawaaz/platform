@@ -1,20 +1,22 @@
 package com.logistic.platform.Controllers;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
 
 @Controller
 public class FrontenedController {
     
-    @GetMapping("/websoc")
+    @GetMapping("/hi")
     public String showsoc()
     {
-        return "websoc";
+        return "user_fro"; 
     }
 
-    @GetMapping("/index")
-    public String book()
+    @GetMapping("/frontuser")
+    public String book(Model model)
     {
-        return "book";
+        return "hello";
     }
 }

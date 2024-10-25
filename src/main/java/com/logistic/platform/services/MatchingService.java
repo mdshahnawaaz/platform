@@ -38,7 +38,7 @@ public class MatchingService {
         double pickupLon = booking.getPickuplon();
         String vehicleType = booking.getVehicleType();
 
-        List<Integer> nearbyDriverIds = findNearbyDrivers(pickupLat,pickupLon, 50.0); // 5.0 km radius
+        List<Integer> nearbyDriverIds = findNearbyDrivers(pickupLat,pickupLon, 100000.0); // 5.0 km radius
 
         List<Driver> eligibleDrivers = driverRepository.findByIdInAndVehicleTypeAndStatus(
         nearbyDriverIds, vehicleType, "Available");

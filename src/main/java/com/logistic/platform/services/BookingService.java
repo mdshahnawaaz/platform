@@ -3,6 +3,7 @@ package com.logistic.platform.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,4 +103,9 @@ public class BookingService {
     //     System.out.println(loc);
 
     // }
+
+    public List<Booking> getDriverDetails(int driverId)
+    {
+        return bookingRepository.findByDriverId(driverId);
+    }
 }
