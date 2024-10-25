@@ -30,7 +30,7 @@ public class PricingController {
         
         double distance = DistanceCalculator.calculateDistance(pickupLat, pickupLon, dropoffLat, dropoffLon);
         BigDecimal d= pricingService.calculatePrice(distance, vehicleType, demandFactor);
-        
+        System.out.println(d);
         return d;
     }
 }

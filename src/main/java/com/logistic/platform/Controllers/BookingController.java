@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import com.logistic.platform.models.Booking;
 import com.logistic.platform.services.BookingService;
+
 
 @Controller
 @RequestMapping("/logistics/bookings")

@@ -103,7 +103,6 @@ public class BookingService {
     //     System.out.println(loc);
 
     // }
-
     public List<Booking> getDriverDetails(int driverId)
     {
         return bookingRepository.findByDriverId(driverId);

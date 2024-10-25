@@ -29,7 +29,6 @@ public class DriverController {
      @Autowired
     private DriverService driverService;
 
-
     @Autowired
     private BookingService bookingService;
 
@@ -59,6 +58,7 @@ public class DriverController {
             return ResponseEntity.badRequest().body("Unable to update status");
         }
     }
+
 
     @GetMapping("/{id}/allbooking")
     public String getMethodName(@PathVariable int id,Model model) {
