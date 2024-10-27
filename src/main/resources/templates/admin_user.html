@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .booking-card {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Booking Detail</h1>
+        <div class="row">
+            <div class="col-md-8 offset-md-2 booking-card">
+                <div class="card" th:if="${booking.isPresent()}">
+                    <div class="card-header">
+                        <h5 class="card-title" th:text="'Booking ID: ' + ${booking.get().id}"></h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>User ID:</strong> <span th:text="${booking.get().user.id}"></span></p>
+                        <p><strong>User Name:</strong> <span th:text="${booking.get().user.username}"></span></p>
+                        <p><strong>User Email:</strong> <span th:text="${booking.get().user.email}"></span></p>
+                        <p><strong>User Phone:</strong> <span th:text="${booking.get().user.phoneNumber}"></span></p>
+                        <p><strong>Driver ID:</strong> <span th:text="${booking.get().driver != null ? booking.get().driver.id : 'Not assigned'}"></span></p>
+                        <p><strong>Driver Name:</strong> <span th:text="${booking.get().driver != null ? booking.get().driver.name : 'Not assigned'}"></span></p>
+                        <p><strong>Pickup Location:</strong> <span th:text="${booking.get().pickuplat + ', ' + booking.get().pickuplon}"></span></p>
+                        <p><strong>Dropoff Location:</strong> <span th:text="${booking.get().dropoffLat + ', ' + booking.get().dropoffLon}"></span></p>
+                        <p><strong>Estimated Cost:</strong> <span th:text="${'$' + #numbers.formatDecimal(booking.get().estimatedCost, 1, 2)}"></span></p>
+                        <p><strong>Status:</strong> <span th:text="${booking.get().status}"></span></p>
+                        <p><strong>Created At:</strong> <span th:text="${#temporals.format(booking.get().createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+                        <p><strong>Deliver At:</strong> <span th:text="${booking.get().deliverAt != null ? #temporals.format(booking.get().deliverAt, 'yyyy-MM-dd HH:mm') : 'Not specified'}"></span></p>
+                        <p><strong>Vehicle Type:</strong> <span th:text="${booking.get().vehicleType}"></span></p>
+                    </div>
+                </div>
+                <div class="alert alert-warning" th:unless="${booking.isPresent()}">
+                    <p>No booking found with the given ID.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

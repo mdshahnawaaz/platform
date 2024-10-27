@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .driver-card {
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .status-badge {
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Driver Detail</h1>
+        <div class="row">
+            <div class="col-md-8 offset-md-2 driver-card">
+                <div class="card" th:if="${driver.isPresent()}">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0" th:text="'Driver ID: ' + ${driver.get().id}"></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-user"></i> Name:</strong> <span th:text="${driver.get().name}"></span></p>
+                                <p><strong><i class="fas fa-id-card"></i> License Number:</strong> <span th:text="${driver.get().licenseNumber}"></span></p>
+                                <p><strong><i class="fas fa-car"></i> Vehicle Type:</strong> <span th:text="${driver.get().vehicleType}"></span></p>
+                                <p><strong><i class="fas fa-taxi"></i> Vehicle Number:</strong> <span th:text="${driver.get().vehicleNumber}"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-check-circle"></i> Available:</strong> <span th:text="${driver.get().available ? 'Yes' : 'No'}"></span></p>
+                                <p><strong><i class="fas fa-info-circle"></i> Status:</strong> 
+                                    <span th:class="${'badge status-badge ' + (driver.get().status == 'ACTIVE' ? 'bg-success' : 'bg-danger')}" th:text="${driver.get().status}"></span>
+                                </p>
+                                <p><strong><i class="fas fa-star"></i> Rating:</strong> <span th:text="${driver.get().rating + '/5'}"></span></p>
+                                <p><strong><i class="fas fa-map-marker-alt"></i> Location:</strong> <span th:text="${driver.get().driverLat + ', ' + driver.get().driverLon}"></span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button class="btn btn-danger" th:onclick="'deleteDriver(' + ${driver.get().id} + ')'">
+                                <i class="fas fa-trash"></i> Delete Driver
+                            </button>
+                            <button class="btn btn-warning" th:onclick="'changeStatus(' + ${driver.get().id} + ')'">
+                                <i class="fas fa-exchange-alt"></i> Change Status
+                            </button>
+                            <button class="btn btn-info" th:onclick="'trackVehicle(' + ${driver.get().id} + ')'">
+                                <i class="fas fa-map-marked-alt"></i> Track Vehicle
+                            </button>
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#ratingModal">
+                                <i class="fas fa-star"></i> Rate Driver
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-warning" th:unless="${driver.isPresent()}">
+                    <p>No driver found with the given ID.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ratingModalLabel">Rate Driver</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="rating">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star" data-rating="5"></i>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" th:onclick="'submitRating(' + ${driver.isPresent() ? driver.get().id : 0} + ')'">Submit Rating</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function deleteDriver(driverId) {
+            if (confirm('Are you sure you want to delete this driver?')) {
+                // Add AJAX call to delete driver
+                console.log('Deleting driver with ID: ' + driverId);
+            }
+        }
+
+        function changeStatus(driverId) {
+            // Add AJAX call to change driver status
+            console.log('Changing status for driver with ID: ' + driverId);
+        }
+
+        function trackVehicle(driverId) {
+            // Add logic to show vehicle tracking
+            console.log('Tracking vehicle for driver with ID: ' + driverId);
+        }
+
+        let selectedRating = 0;
+        document.querySelectorAll('.rating .fa-star').forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = this.getAttribute('data-rating');
+                document.querySelectorAll('.rating .fa-star').forEach(s => {
+                    s.style.color = s.getAttribute('data-rating') <= selectedRating ? 'gold' : 'gray';
+                });
+            });
+        });
+
+        function submitRating(driverId) {
+            if (selectedRating > 0) {
+                // Add AJAX call to submit rating
+                console.log('Submitting rating ' + selectedRating + ' for driver with ID: ' + driverId);
+                $('#ratingModal').modal('hide');
+            } else {
+                alert('Please select a rating');
+            }
+        }
+    </script>
+</body>
+</html>

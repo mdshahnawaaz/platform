@@ -1,0 +1,258 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings and Drivers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-8">
+
+    
+    <div class="w-full max-w-6xl p-5 bg-white shadow-lg rounded-lg mb-8">
+        <h1 class="text-3xl font-bold text-center mb-5">Bookings</h1>
+
+      
+        <div class="flex justify-end mb-3">
+            <input 
+                type="text" 
+                placeholder="Search by Booking ID" 
+                id="bookingSearchInput"
+                class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onkeyup="searchTable('bookingSearchInput', 'bookingTable')"
+            />
+        </div>
+
+        <div class="table-container overflow-x-auto">
+            <table id="bookingTable" class="w-full bg-white border border-gray-200 rounded-lg text-center">
+                <thead class="bg-blue-600 text-white">
+                    <tr>
+                        <th class="px-4 py-2">Booking ID</th>
+                        <th class="px-4 py-2">Customer Name</th>
+                        <th class="px-4 py-2">Date</th>
+                        <th class="px-4 py-2">Status</th>
+                        <th class="px-4 py-2">Vehicle Type</th>
+                        <th class="px-4 py-2">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="booking : ${bookings}" class="hover:bg-gray-100 border-b">
+                        <td class="px-4 py-2" th:text="${booking.id}"></td>
+                        <td class="px-4 py-2" th:text="${booking.user.username}"></td>
+                        <td class="px-4 py-2" th:text="${#temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td class="px-4 py-2" th:text="${booking.status}"></td>
+                        <td class="px-4 py-2" th:text="${booking.vehicleType}"></td>
+                        <td class="px-4 py-2">
+                            <a th:href="@{'/logistics/admin/bookings/' + ${booking.id}}" class="text-blue-500 hover:underline">View</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="w-full max-w-6xl p-5 bg-white shadow-lg rounded-lg">
+        <h1 class="text-3xl font-bold text-center mb-5">Drivers</h1>
+
+
+        <div class="flex justify-end mb-3">
+            <input 
+                type="text" 
+                placeholder="Search by Driver Name" 
+                id="driverSearchInput"
+                class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                onkeyup="searchTable('driverSearchInput', 'driverTable')"
+            />
+        </div>
+
+        <div class="table-container overflow-x-auto">
+            <table id="driverTable" class="w-full bg-white border border-gray-200 rounded-lg text-center">
+                <thead class="bg-green-600 text-white">
+                    <tr>
+                        <th class="px-4 py-2">Driver ID</th>
+                        <th class="px-4 py-2">Name</th>
+                        <th class="px-4 py-2">Email</th>
+                        <th class="px-4 py-2">Phone Number</th>
+                        <th class="px-4 py-2">Vehicle Type</th>
+                        <th class="px-4 py-2">Status</th>
+                        <th class="px-4 py-2">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="driver : ${drivers}" class="hover:bg-gray-100 border-b">
+                        <td class="px-4 py-2" th:text="${driver.id}"></td>
+                        <td class="px-4 py-2" th:text="${driver.name}"></td>
+                        <td class="px-4 py-2" th:text="${driver.rating}"></td>
+                        <td class="px-4 py-2" th:text="${driver.licenseNumber}"></td>
+                        <td class="px-4 py-2" th:text="${driver.vehicleType}"></td>
+                        <td class="px-4 py-2" th:text="${driver.status}"></td>
+                        <td class="px-4 py-2">
+                            <a th:href="@{'/logistics/admin/drivers/' + ${driver.id}}" class="text-green-500 hover:underline">View</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    
+    <script>
+        function searchTable(inputId, tableId) {
+            let input = document.getElementById(inputId);
+            let filter = input.value.toUpperCase();
+            let table = document.getElementById(tableId);
+            let tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    let txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }       
+            }
+        }
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings and Drivers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .table-container table {
+            position: relative;
+        }
+        .table-container thead {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-8">
+
+    <!-- Bookings Table -->
+    <div class="w-full max-w-6xl p-5 bg-white shadow-lg rounded-lg mb-8">
+        <h1 class="text-3xl font-bold text-center mb-5">Bookings</h1>
+
+        <!-- Search by Booking ID -->
+        <div class="flex justify-end mb-3">
+            <input 
+                type="text" 
+                placeholder="Search by Booking ID" 
+                id="bookingSearchInput"
+                class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onkeyup="searchTable('bookingSearchInput', 'bookingTable')"
+            />
+        </div>
+
+        <!-- Table to display bookings -->
+        <div class="table-container">
+            <table id="bookingTable" class="w-full bg-white border border-gray-200 rounded-lg text-center">
+                <thead class="bg-blue-600 text-white">
+                    <tr>
+                        <th class="px-4 py-2">Booking ID</th>
+                        <th class="px-4 py-2">Customer Name</th>
+                        <th class="px-4 py-2">Date</th>
+                        <th class="px-4 py-2">Status</th>
+                        <th class="px-4 py-2">Vehicle Type</th>
+                        <th class="px-4 py-2">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="booking : ${bookings}" class="hover:bg-gray-100 border-b">
+                        <td class="px-4 py-2" th:text="${booking.id}"></td>
+                        <td class="px-4 py-2" th:text="${booking.user.username}"></td>
+                        <td class="px-4 py-2" th:text="${#temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td class="px-4 py-2" th:text="${booking.status}"></td>
+                        <td class="px-4 py-2" th:text="${booking.vehicleType}"></td>
+                        <td class="px-4 py-2">
+                            <a th:href="@{'/logistics/admin/bookings/' + ${booking.id}}" class="text-blue-500 hover:underline">View</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Drivers Table -->
+    <div class="w-full max-w-6xl p-5 bg-white shadow-lg rounded-lg">
+        <h1 class="text-3xl font-bold text-center mb-5">Drivers</h1>
+
+        <!-- Search by Driver Name -->
+        <div class="flex justify-end mb-3">
+            <input 
+                type="text" 
+                placeholder="Search by Driver Name" 
+                id="driverSearchInput"
+                class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                onkeyup="searchTable('driverSearchInput', 'driverTable')"
+            />
+        </div>
+
+        <!-- Table to display drivers -->
+        <div class="table-container">
+            <table id="driverTable" class="w-full bg-white border border-gray-200 rounded-lg text-center">
+                <thead class="bg-green-600 text-white">
+                    <tr>
+                        <th class="px-4 py-2">Driver ID</th>
+                        <th class="px-4 py-2">Name</th>
+                        <th class="px-4 py-2">Rating</th>
+                        <th class="px-4 py-2">License Number</th>
+                        <th class="px-4 py-2">Vehicle Type</th>
+                        <th class="px-4 py-2">Status</th>
+                        <th class="px-4 py-2">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="driver : ${drivers}" class="hover:bg-gray-100 border-b">
+                        <td class="px-4 py-2" th:text="${driver.id}"></td>
+                        <td class="px-4 py-2" th:text="${driver.name}"></td>
+                        <td class="px-4 py-2" th:text="${driver.rating}"></td>
+                        <td class="px-4 py-2" th:text="${driver.licenseNumber}"></td>
+                        <td class="px-4 py-2" th:text="${driver.vehicleType}"></td>
+                        <td class="px-4 py-2" th:text="${driver.status}"></td>
+                        <td class="px-4 py-2">
+                            <a th:href="@{'/logistics/admin/drivers/' + ${driver.id}}" class="text-green-500 hover:underline">View</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- JavaScript for search functionality -->
+    <script>
+        function searchTable(inputId, tableId) {
+            let input = document.getElementById(inputId);
+            let filter = input.value.toUpperCase();
+            let table = document.getElementById(tableId);
+            let tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    let txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }       
+            }
+        }
+    </script>
+</body>
+</html>

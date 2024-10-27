@@ -1,8 +1,9 @@
 package com.logistic.platform.services;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.time.Duration;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,23 @@ public class AdminService {
     // Fleet Management
     public List<Driver> getAllDrivers() {
         return driverRepository.findAll();
+    }
+
+    public List<Booking> getAllBooking()
+    {
+        return bookingRepository.findAll();
+    }
+
+    public Optional<Booking> getSingleBooking(int id)
+    {
+         return bookingRepository.findById(id);
+        
+    }
+
+    public Optional<Driver> getSingleDriver(int id)
+    {
+         return driverRepository.findById(id);
+        
     }
 
     public Driver updateDriverStatus(int driverId, String status) {

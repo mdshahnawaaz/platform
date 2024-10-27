@@ -86,6 +86,7 @@ public class BookingService {
         }
 
         Booking booking = bookingOpt.get();
+        booking.setDeliverAt(LocalDateTime.now());
         booking.setStatus(status);
         return bookingRepository.save(booking);
     }

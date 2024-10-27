@@ -46,9 +46,6 @@ public class DriverService {
         if (driverOpt.isPresent()) {
             Driver driver = driverOpt.get();
             if (driver.getCurrentJob() != null) {
-
-                // driver.setStatus(status);
-
                 if ("Delivered".equals(status)) {
                     System.out.println("status changed");
                 driver.setStatus(status);
