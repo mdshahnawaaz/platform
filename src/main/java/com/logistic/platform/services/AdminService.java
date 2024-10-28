@@ -52,6 +52,11 @@ public class AdminService {
         return driverRepository.save(driver);
     }
 
+    public int number_of_booking_driver(int id)
+    {
+        return bookingRepository.countByDriver(id);
+    }
+
     // Data Analytics
     public long getTotalTripsCompleted() {
         return bookingRepository.countByStatus("COMPLETED");

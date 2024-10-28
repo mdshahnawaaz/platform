@@ -49,6 +49,10 @@
                                 <p><strong><i class="fas fa-map-marker-alt"></i> Location:</strong> <span th:text="${driver.get().driverLat + ', ' + driver.get().driverLon}"></span></p>
                             </div>
                         </div>
+
+                        <div>
+                            <p><strong><i class="fas fa-taxi"></i> Number Of Booking Done:</strong> <span th:text="${count_of_booking}"></span></p>
+                        </div>
                         
                         <div class="btn-group">
                             <button class="btn btn-danger" th:onclick="'deleteDriver(' + ${driver.get().id} + ')'">
@@ -103,6 +107,7 @@
         function deleteDriver(driverId) {
             if (confirm('Are you sure you want to delete this driver?')) {
                 // Add AJAX call to delete driver
+                
                 console.log('Deleting driver with ID: ' + driverId);
             }
         }

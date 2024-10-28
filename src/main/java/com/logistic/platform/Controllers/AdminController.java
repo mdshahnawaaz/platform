@@ -46,6 +46,8 @@ public class AdminController {
     public String getSingleDriver(@PathVariable("id") int id,Model model) {
         Optional<Driver> driver=adminService.getSingleDriver(id);
         model.addAttribute("driver", driver);
+        int count=adminService.number_of_booking_driver(id);
+        model.addAttribute("count_of_booking",count);
         return "admin_driver";
 
     }
@@ -54,6 +56,8 @@ public class AdminController {
     public ResponseEntity<List<Driver>> getAllDrivers() {
         return ResponseEntity.ok(adminService.getAllDrivers());
     }
+
+    
 
     @PutMapping("/drivers/{id}/status")
     public ResponseEntity<Driver> updateDriverStatus(@PathVariable int id, @RequestParam String status) {
