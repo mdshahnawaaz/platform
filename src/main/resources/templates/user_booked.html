@@ -65,9 +65,32 @@
         }
 
         function trackDriver() {
-            alert('Tracking driver...');
-            // Implement the logic to track driver
+            fetch(`/driver-map/11`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'text/html',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.text(); // We're expecting HTML, so we use text() instead of json()
+    })
+    .then(html => {
+        // Replace the content of the current page with the new HTML
+        document.open();
+        document.write(html);
+        document.close();
+        
+        // Alternatively, if you want to update only a specific part of the page:
+        // document.getElementById('mapContainer').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error fetching driver map:', error);
+        alert('Error fetching driver map. Please try again.');
+    });
+}
     </script>
 </div>
 
