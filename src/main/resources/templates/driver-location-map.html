@@ -1,59 +1,179 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Driver Location Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Route Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        #map { height: 400px; width: 100%; }
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #ecf0f1;
+            --text-color: #34495e;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        #map-container {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-button {
+            background-color: var(--secondary-color);
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            #map {
+                height: 400px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Driver Location Map</h1>
-    <div id="map"></div>
-    <p>Driver ID: <span th:text="${driverId}"></span></p>
-    <p>Last Updated: <span id="lastUpdated"></span></p>
+    <header>
+        <h1>Driver Route Map</h1>
+    </header>
+    <div class="container">
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
+        <div class="button-container">
+            <button class="back-button" onclick="goBack()">Back to Dashboard</button>
+        </div>
+    </div>
 
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
     <script th:inline="javascript">
+        // Driver and booking data will be inserted here by Thymeleaf
         var driverId = /*[[${driverId}]]*/ 'defaultDriverId';
-        var map = L.map('map').setView([0, 0], 2);
-        var marker;
+        var dropOffLocation = /*[[${dropOffLocation}]]*/ null;
 
+        var map = L.map('map').setView([0, 0], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        function updateLocation() {
+        var driverMarker;
+        var routingControl;
+
+        function updateDriverLocation() {
             fetch(`/api/driver-location/${driverId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data) {
-                        var lat = data.latitude;
-                        var lon = data.longitude;
-                        var timestamp = new Date(data.timestamp * 1000).toLocaleString();
+                        var driverLat = data.latitude;
+                        var driverLon = data.longitude;
 
-                        if (!marker) {
-                            marker = L.marker([lat, lon]).addTo(map);
+                        if (!driverMarker) {
+                            driverMarker = L.marker([driverLat, driverLon]).addTo(map);
                         } else {
-                            marker.setLatLng([lat, lon]);
+                            driverMarker.setLatLng([driverLat, driverLon]);
                         }
 
-                        map.setView([lat, lon], 13);
-                        document.getElementById('lastUpdated').textContent = timestamp;
+                        updateRoute(driverLat, driverLon);
                     }
                 })
-                .catch(error => console.error('Error fetching location:', error));
+                .catch(error => console.error('Error fetching driver location:', error));
         }
 
-        // Update location every 5 seconds
-        updateLocation();
-        setInterval(updateLocation, 5000);
+        function updateRoute(driverLat, driverLon) {
+            if (routingControl) {
+                map.removeControl(routingControl);
+            }
+
+            routingControl = L.Routing.control({
+                waypoints: [
+                    L.latLng(driverLat, driverLon),
+                    L.latLng(dropOffLocation.latitude, dropOffLocation.longitude)
+                ],
+                routeWhileDragging: false,
+                showAlternatives: false,
+                fitSelectedRoutes: true
+            }).addTo(map);
+        }
+
+        // Update driver location and route every 10 seconds
+        updateDriverLocation();
+        setInterval(updateDriverLocation, 10000);
+
+        function goBack() {
+            window.history.back();
+        }
     </script>
 </body>
-</html> -->
+</html>
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -124,4 +244,4 @@
         setInterval(updateDriverLocation, 10000);
     </script>
 </body>
-</html>
+</html> -->

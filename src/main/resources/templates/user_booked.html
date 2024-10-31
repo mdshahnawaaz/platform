@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -45,14 +45,14 @@
         <button class="btn" onclick="trackDriver()">Track Driver</button>
     </div>
 
-    <!-- Billing details section -->
+ 
     <div id="billingDetails" class="billing-details" style="display:none;">
         <p><strong>Actual Cost:</strong> $40.00</p>
         <p><strong>Platform Charge:</strong> $10.00</p>
         <p><strong>Total Amount:</strong> $50.00</p>
     </div>
 
-    <!-- Placeholder for estimate and tracking scripts -->
+    
     <script>
         function showBillingDetails() {
             const billingDetails = document.getElementById('billingDetails');
@@ -91,6 +91,188 @@
         alert('Error fetching driver map. Please try again.');
     });
 }
+    </script>
+</div>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3490dc;
+            --secondary-color: #2779bd;
+            --accent-color: #e74c3c;
+            --background-color: #f5f7fa;
+            --text-color: #333;
+            --card-bg: #fff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            perspective: 1000px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card:hover {
+            transform: rotateX(5deg) rotateY(5deg);
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        strong {
+            color: var(--secondary-color);
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .billing-details {
+            margin-top: 20px;
+            padding: 20px;
+            border-top: 1px solid #ccc;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2 th:text="'Driver Details for ID ' + ${driverId}">Driver Details</h2>
+    <p><strong>Name:</strong> <span th:text="${driver_name}">John Doe</span></p>
+    <p><strong>Vehicle:</strong> <span th:text="${driver_vehicleType}">Toyota Prius</span></p>
+    <p><strong>Rating:</strong> <span th:text="${driver_rating}">4.8</span></p>
+     
+    <div class="btn-container">
+        <button class="btn" onclick="showBillingDetails()">Price: <span th:text="${estimate_price}">$50.00</span></button>
+        <button class="btn" onclick="estimateTime()">Estimate Time</button>
+        <button class="btn" onclick="trackDriver()">Track Driver</button>
+    </div>
+
+    <div id="billingDetails" class="billing-details">
+        <p><strong>Actual Cost:</strong> $40.00</p>
+        <p><strong>Platform Charge:</strong> $10.00</p>
+        <p><strong>Total Amount:</strong> $50.00</p>
+    </div>
+
+    <script>
+        function showBillingDetails() {
+            const billingDetails = document.getElementById('billingDetails');
+            billingDetails.style.display = billingDetails.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function estimateTime() {
+            alert('Estimating time...');
+            // Implement the logic to fetch and display estimated time
+        }
+
+        function trackDriver() {
+            fetch(`/driver-map/11`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'text/html',
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(html => {
+                document.open();
+                document.write(html);
+                document.close();
+            })
+            .catch(error => {
+                console.error('Error fetching driver map:', error);
+                alert('Error fetching driver map. Please try again.');
+            });
+        }
     </script>
 </div>
 

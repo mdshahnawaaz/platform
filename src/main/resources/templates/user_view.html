@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogiSwift 3D - Revolutionary Logistics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --background-color: #0f0f1f;
+            --text-color: #ecf0f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(44, 62, 80, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            opacity: 0.1;
+            transform: rotate(45deg) scale(1.5);
+            animation: rotateBackground 20s linear infinite;
+        }
+
+        @keyframes rotateBackground {
+            0% { transform: rotate(0deg) scale(1.5); }
+            100% { transform: rotate(360deg) scale(1.5); }
+        }
+
+        .hero-content {
+            text-align: center;
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotateX(0deg); }
+            50% { transform: translateY(-20px) rotateX(5deg); }
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            transform: translateZ(50px);
+            text-shadow: 0 0 20px rgba(74, 144, 226, 0.8);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            transform: translateZ(30px);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            transform: translateZ(40px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #c0392b;
+            transform: translateZ(50px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.6);
+        }
+
+        .services, .why-choose-us {
+            padding: 100px 0;
+            perspective: 1000px;
+        }
+
+        .services h2, .why-choose-us h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 50px;
+            transform: translateZ(30px);
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+        }
+
+        .service-grid, .reasons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .service-item, .reason-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .service-item:hover, .reason-item:hover {
+            transform: translateZ(20px) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .service-icon, .reason-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .service-title, .reason-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .tracking-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+        }
+
+        .tracking-form {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tracking-form h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .tracking-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+        }
+
+        footer {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            .hero p {
+                font-size: 1rem;
+            }
+            .services h2, .why-choose-us h2 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">LogiSwift</div>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#services">Services</a>
+                <a href="#why-choose-us">Why Us</a>
+                <a href="#tracking">Tracking</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Revolutionary Logistics</h1>
+                <p>Experience the future of shipping with LogiSwift</p>
+                <button class="btn" onclick="callEndpoint('/explore-services')">Explore Our Services</button>
+            </div>
+        </section>
+
+        <section id="services" class="services">
+            <div class="container">
+                <h2>Our Services</h2>
+                <div class="service-grid">
+                    <div class="service-item">
+                        <div class="service-icon">🚚</div>
+                        <h3 class="service-title">Express Delivery</h3>
+                        <p>Lightning-fast shipping to meet your deadlines</p>
+                        <button class="btn" onclick="callEndpoint('/hi')">Get Started</button>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon">🌐</div>
+                        <h3 class="service-title">Global Reach</h3>
+                        <p>Seamless international logistics solutions</p>
+                        <button class="btn" onclick="callEndpoint('/global-reach')">Explore</button>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon">📦</div>
+                        <h3 class="service-title">Secure Packaging</h3>
+                        <p>State-of-the-art packaging for ultimate protection</p>
+                        <button class="btn" onclick="callEndpoint('/secure-packaging')">Learn More</button>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon">📊</div>
+                        <h3 class="service-title">Real-time Tracking</h3>
+                        <p>Monitor your shipments 24/7 with precision</p>
+                        <button class="btn" onclick="callEndpoint('/real-time-tracking')">Track Now</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="why-choose-us" class="why-choose-us">
+            <div class="container">
+                <h2>Why Choose LogiSwift</h2>
+                <div class="reasons-grid">
+                    <div class="reason-item">
+                        <div class="reason-icon">🚀</div>
+                        <h3 class="reason-title">Lightning-Fast Delivery</h3>
+                        <p>Our advanced logistics network ensures your packages arrive faster than ever.</p>
+                        <button class="btn" onclick="callEndpoint('/learn-more/fast-delivery')">Learn More</button>
+                    </div>
+                    <div class="reason-item">
+                        <div class="reason-icon">🌍</div>
+                        <h3 class="reason-title">Global Reach</h3>
+                        <p>With operations in over 200 countries, we connect you to the world.</p>
+                        <button class="btn" onclick="callEndpoint('/learn-more/global-reach')">Learn More</button>
+                    </div>
+                    <div class="reason-item">
+                        <div class="reason-icon">🔒</div>
+                        <h3 class="reason-title">Unparalleled Security</h3>
+                        <p>State-of-the-art tracking and secure handling for peace of mind.</p>
+                        <button class="btn" onclick="callEndpoint('/learn-more/security')">Learn More</button>
+                    </div>
+                    <div class="reason-item">
+                        <div class="reason-icon">💚</div>
+                        <h3 class="reason-title">Eco-Friendly Solutions</h3>
+                        <p>Committed to sustainable practices and reducing our carbon footprint.</p>
+                        <button class="btn" onclick="callEndpoint('/learn-more/eco-friendly')">Learn More</button>
+                    </div>
+                    <div class="reason-item">
+                        <div class="reason-icon">💼</div>
+                        <h3 class="reason-title">Business Integration</h3>
+                        <p>Seamless API integration for effortless business logistics management.</p>
+                        <button class="btn" onclick="callEndpoint('/learn-more/business-integration')">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tracking" class="tracking-section">
+            <div class="container">
+                <div class="tracking-form">
+                    <h3>Track Your Shipment</h3>
+                    <form onsubmit="return trackShipment()">
+                        <input type="text" id="trackingNumber" placeholder="Enter tracking number" required>
+                        <button type="submit" class="btn">Track Now</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span th:text="${#dates.year(#dates.createNow())}">2024</span> LogiSwift. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function callEndpoint(endpoint) {
+    console.log(`Calling endpoint: ${endpoint}`);
+    
+    fetch(endpoint, {
+        method: 'GET',
+        headers: {
+            'Accept': 'text/html',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text(); // We're expecting HTML, so we use text() instead of json()
+    })
+    .then(html => {
+        // Replace the content of the current page with the new HTML
+        document.open();
+        document.write(html);
+        document.close();
+        
+        // Alternatively, if you want to update only a specific part of the page:
+        // document.getElementById('contentContainer').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error fetching HTML:', error);
+        // Handle the error appropriately, e.g., show an error message to the user
+    });
+}
+
+        function trackShipment() {
+            const trackingNumber = document.getElementById('trackingNumber').value;
+            callEndpoint(`/track-shipment/${trackingNumber}`);
+            return false; // Prevent form submission
+        }
+    </script>
+</body>
+</html>

@@ -19,4 +19,10 @@ public class FrontenedController {
     {
         return "hello";
     }
+
+    @GetMapping("/")
+    public String front()
+    {
+        return "user_view";
+    }
 }

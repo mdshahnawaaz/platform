@@ -1,8 +1,118 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ride Estimation and Booking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --background-color: #0f0f1f;
+            --text-color: #ecf0f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            transform-style: preserve-3d;
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+        }
+
+        h1 {
+            font-size: 3rem;
+            transform: translateZ(50px);
+        }
+
+        h2 {
+            font-size: 2rem;
+            transform: translateZ(30px);
+        }
+
+        form {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        form:hover {
+            transform: translateZ(20px) rotateX(5deg) rotateY(5deg);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: translateZ(20px);
+        }
+
+        button:hover {
+            background-color: #c0392b;
+            transform: translateZ(30px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        #estimatedPrice {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            text-align: center;
+            color: var(--primary-color);
+            transform: translateZ(40px);
+        }
+    </style>
     <script>
         function getEstimate() {
             const pickupLat = document.getElementById('pickupLatitude').value;
@@ -15,63 +125,66 @@
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('estimatedPrice').innerText = `Estimated Price: $${data}`;
+                    // Set hidden input values for booking
+                    document.getElementById('hiddenPickupLat').value = pickupLat;
+                    document.getElementById('hiddenPickupLon').value = pickupLon;
+                    document.getElementById('hiddenDropoffLat').value = dropoffLat;
+                    document.getElementById('hiddenDropoffLon').value = dropoffLon;
+                    document.getElementById('hiddenVehicleType').value = vehicleType;
                 })
                 .catch(error => console.error('Error fetching estimate:', error));
         }
     </script>
 </head>
 <body>
-    <h1>Ride Estimation and Booking</h1>
-    
-    <h2>Estimate Ride Price</h2>
-    <form id="estimateForm">
-        <div>
-            <label for="pickupLatitude">Pickup Latitude:</label>
-            <input type="number" id="pickupLatitude" step="any" required/>
-        </div>
-        <div>
-            <label for="pickupLongitude">Pickup Longitude:</label>
-            <input type="number" id="pickupLongitude" step="any" required/>
-        </div>
-        <div>
-            <label for="dropoffLatitude">Drop-off Latitude:</label>
-            <input type="number" id="dropoffLatitude" step="any" required/>
-        </div>
-        <div>
-            <label for="dropoffLongitude">Drop-off Longitude:</label>
-            <input type="number" id="dropoffLongitude" step="any" required/>
-        </div>
-        <div>
-            <label for="vehicleType">Vehicle Type:</label>
-            <select id="vehicleType">
-                <option value="car">Car</option>
-                <option value="van">Van</option>
-               
-            </select>
-        </div>
-        <button type="button" onclick="getEstimate()">Get Estimate</button>
-    </form>
+    <div class="container">
+        <h1>Ride Estimation and Booking</h1>
+        
+        <h2>Estimate Ride Price</h2>
+        <form id="estimateForm">
+            <div class="form-group">
+                <label for="pickupLatitude">Pickup Latitude:</label>
+                <input type="number" id="pickupLatitude" step="any" required/>
+            </div>
+            <div class="form-group">
+                <label for="pickupLongitude">Pickup Longitude:</label>
+                <input type="number" id="pickupLongitude" step="any" required/>
+            </div>
+            <div class="form-group">
+                <label for="dropoffLatitude">Drop-off Latitude:</label>
+                <input type="number" id="dropoffLatitude" step="any" required/>
+            </div>
+            <div class="form-group">
+                <label for="dropoffLongitude">Drop-off Longitude:</label>
+                <input type="number" id="dropoffLongitude" step="any" required/>
+            </div>
+            <div class="form-group">
+                <label for="vehicleType">Vehicle Type:</label>
+                <select id="vehicleType">
+                    <option value="standard">Standard</option>
+                    <option value="premium">Premium</option>
+                </select>
+            </div>
+            <button type="button" onclick="getEstimate()">Get Estimate</button>
+        </form>
 
-    <div id="estimatedPrice"></div>
+        <div id="estimatedPrice"></div>
 
-    <h2>Book Your Ride</h2>
-    <form th:action="@{/logistics/bookings}" method="post">
-        <input type="hidden" name="userId" value="1"/>
-        <input type="number" name="pickupLat" th:value="${param.pickupLat}" step="any" required/>
-        <input type="number" name="pickupLon" th:value="${param.pickupLon}" step="any" required/>
-        <input type="number" name="dropoffLat" th:value="${param.dropoffLat}" step="any" required/>
-        <input type="number" name="dropoffLon" th:value="${param.dropoffLon}" step="any" required/>
-        <select name="vehicleType" required>
-            <option value="car">Car</option>
-            <option value="van">Van</option>
-           
-        </select>
-        <button type="submit">Book Ride</button>
-    </form>
+        <h2>Book Your Ride</h2>
+        <form th:action="@{/logistics/bookings}" method="post">
+            <input type="hidden" name="userId" value="1"/>
+            <input type="hidden" name="pickupLat" id="hiddenPickupLat"/>
+            <input type="hidden" name="pickupLon" id="hiddenPickupLon"/>
+            <input type="hidden" name="dropoffLat" id="hiddenDropoffLat"/>
+            <input type="hidden" name="dropoffLon" id="hiddenDropoffLon"/>
+            <input type="hidden" name="vehicleType" id="hiddenVehicleType"/>
+            <button type="submit">Book Ride</button>
+        </form>
+    </div>
 </body>
-</html> -->
+</html>
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -126,19 +239,19 @@
             <select id="vehicleType">
                 <option value="standard">Car</option>
                 <option value="premium">Van</option>
-                <!-- Add more vehicle types as needed -->
+             
             </select>
         </div>
         <button type="button" onclick="getEstimate()">Get Estimate</button>
     </form>
 
-    <!-- Display estimated price -->
+    
     <div id="estimatedPrice"></div>
 
     <h2>Book Your Ride</h2>
-    <!-- Booking form -->
+   
     <form th:action="@{/logistics/bookings}" method="post">
-        <!-- Hidden fields to pass data to booking endpoint -->
+    
         <input type="hidden" name="userId" value="1"/>
         <input type="hidden" name="pickupLat" id="hiddenPickupLat"/>
         <input type="hidden" name="pickupLon" id="hiddenPickupLon"/>
@@ -146,9 +259,9 @@
         <input type="hidden" name="dropoffLon" id="hiddenDropoffLon"/>
         <input type="hidden" name="vehicleType" id="hiddenVehicleType"/>
         
-        <!-- Submit button for booking -->
+       
         <button type="submit">Book Ride</button>
     </form>
 
 </body>
-</html>
+</html> -->
