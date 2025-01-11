@@ -24,7 +24,7 @@ System Throughput
 	•	Requests per Minute: 600,000
 
 Infrastructure Requirements
-
+<!--
 Servers
 
 	•	Requests per Server: 500 requests per second
@@ -49,8 +49,11 @@ CPU Size Calculation
 	•	Total Required CPU Cores: 25 cores
 	•	Cores per CPU: 8 cores
 	•	Total CPUs Needed: 4 CPUs (rounded up)
+ -->
 
-Technical Decision: Apache Kafka and Redis
+Technical Decision
+
+	•	Apache Kafka and Redis
 
 Real-Time Data Streaming
 
