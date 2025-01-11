@@ -26,7 +26,7 @@ public class PackageStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String trackingId;
+    private int trackingId;
     private String status;
     private String location;
     private LocalDateTime timestamp;

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package Tracking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #1c1c3c;
+            --accent-color: #e74c3c;
+            --background-color: #0a0a20;
+            --text-color: #ecf0f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            perspective: 1000px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            transform-style: preserve-3d;
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+        }
+
+        h1 {
+            font-size: 3rem;
+            transform: translateZ(50px);
+        }
+
+        h2 {
+            font-size: 2rem;
+            transform: translateZ(30px);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            margin-bottom: 2rem;
+        }
+
+        .card:hover {
+            transform: translateZ(20px) rotateX(5deg) rotateY(5deg);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .status:hover {
+            transform: translateZ(10px) scale(1.05);
+        }
+
+        .status-icon {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        .status-text {
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .status-time {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .btn-track {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: translateZ(20px);
+        }
+
+        .btn-track:hover {
+            background-color: #c0392b;
+            transform: translateZ(30px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Package Tracking</h1>
+        
+        <div class="card">
+            <h2>Current Status</h2>
+            <p><strong>Tracking ID:</strong> <span th:text="${package.trackingId}"></span></p>
+            <p><strong>Package Name:</strong> <span th:text="${package.packageName}"></span></p>
+            <p><strong>Status:</strong> <span th:text="${package.currentStatus}"></span></p>
+            <p><strong>Last Updated:</strong> <span th:text="${#temporals.format(package.lastUpdated, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
+        </div>
+
+        <div class="card">
+            <h2>Status History</h2>
+            <div th:each="status : ${statusHistory}" class="status">
+                <i class="status-icon bi bi-check-circle"></i>
+                <div class="status-text">
+                    <p><strong>Status:</strong> <span th:text="${status.status}"></span></p>
+                    <p><strong>Location:</strong> <span th:text="${status.location}"></span></p>
+                </div>
+                <div class="status-time" th:text="${#temporals.format(status.timestamp, 'yyyy-MM-dd HH:mm:ss')}"></div>
+            </div>
+        </div>
+
+        <button class="btn-track" onclick="location.href='/logistics/tracking/track'">Track Another Package</button>
+    </div>
+</body>
+</html>

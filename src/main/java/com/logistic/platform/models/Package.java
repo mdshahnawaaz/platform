@@ -30,6 +30,4 @@ public class Package {
     private String currentStatus;
     private LocalDateTime lastUpdated;
 
-
-
 }
