@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.logistic.platform.models.Location;
-import com.logistic.platform.services.BookingService;
 import com.logistic.platform.services.KafkaService;
 
 @Controller
@@ -17,8 +16,8 @@ public class DriverLocationController {
     @Autowired
     private KafkaService kafkaService;
 
-    @Autowired
-    private BookingService bookingService;
+    // @Autowired
+    // private BookingService bookingService;
 
      @GetMapping("/driver-map/{driverId}")
     public String showDriverMap(@PathVariable int driverId, Model model) {
