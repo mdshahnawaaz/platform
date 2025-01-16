@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Contact Management</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f8fc;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Search Box Styling */
+        #searchBox {
+            display: block;
+            margin: 20px auto;
+            padding: 15px;
+            width: 40%;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            outline: none;
+            transition: box-shadow 0.3s ease;
+        }
+
+        #searchBox:focus {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Table Styling */
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px;
+            font-size: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        th {
+            background-color: #34495e;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        tr {
+            transition: all 0.3s ease;
+        }
+
+        tr:hover {
+            background-color: #f4f4f4;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Dynamic Row Colors */
+        .green {
+            background-color: #d4edda; /* Green for resolved */
+            color: #155724;
+        }
+
+        .yellow {
+            background-color: #fff3cd; /* Yellow for unseen */
+            color: #856404;
+        }
+
+        .red {
+            background-color: #f8d7da; /* Red for not resolved */
+            color: #721c24;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #searchBox {
+                width: 80%;
+            }
+
+            table {
+                width: 100%;
+            }
+
+            th, td {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Contact Management System</h1>
+
+    <!-- Search Box -->
+    <input type="text" id="searchBox" placeholder="Search by Email..." oninput="filterTable()" />
+
+    <!-- Data Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="contactTable">
+            <!-- Dynamic Rows Rendered by Thymeleaf -->
+            <tr th:each="contact : ${contacts}"
+                th:classappend="${contact.status == 'Seen and Resolved'} ? 'green' : 
+                                ${contact.status == 'Unseen'} ? 'yellow' : 
+                                'red'">
+                <td th:text="${contact.id}"></td>
+                <td th:text="${contact.name}"></td>
+                <td th:text="${contact.email}"></td>
+                <td th:text="${contact.message}"></td>
+                <td th:text="${contact.status}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        /* Search Functionality */
+        function filterTable() {
+            const input = document.getElementById("searchBox").value.toLowerCase();
+            const rows = document.querySelectorAll("#contactTable tr");
+            
+            rows.forEach(row => {
+                const email = row.cells[2].textContent.toLowerCase();
+                if (email.includes(input)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
