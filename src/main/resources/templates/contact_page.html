@@ -60,7 +60,7 @@
         <!-- Right Section: Contact Form -->
         <div class="w-full md:w-1/2 bg-gray-900 p-8">
             <h2 class="text-2xl font-bold mb-4 text-gray-100">Send a Message</h2>
-            <form th:action="@{/submitContact}" th:method="post" class="space-y-6">
+            <form th:action="@{/logistics/contact/submitcontact}" th:method="post" class="space-y-6">
                 <div>
                     <label for="name" class="block text-gray-400 mb-2">Your Name</label>
                     <input type="text" id="name" name="name" placeholder="John Doe" class="w-full border border-gray-700 rounded-md bg-gray-800 text-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>

@@ -121,9 +121,9 @@
         <tbody id="contactTable">
             <!-- Dynamic Rows Rendered by Thymeleaf -->
             <tr th:each="contact : ${contacts}"
-                th:classappend="${contact.status == 'Seen and Resolved'} ? 'green' : 
-                                ${contact.status == 'Unseen'} ? 'yellow' : 
-                                'red'">
+                th:class="${contact.status == 'RESOLVED' ? 'green' : 
+                                (contact.status == 'NOT_RESOLVED' ? 'yellow' : 
+                                'red')}">
                 <td th:text="${contact.id}"></td>
                 <td th:text="${contact.name}"></td>
                 <td th:text="${contact.email}"></td>
