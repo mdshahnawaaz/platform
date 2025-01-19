@@ -58,7 +58,7 @@ public class Booking {
     private BigDecimal estimatedCost;
 
     @Column(nullable = false)
-    private String status;
+    private BookingStatus status;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -68,5 +68,6 @@ public class Booking {
 
     @Column(name = "vehicle_type")
     private String vehicleType;
+
     
 }

@@ -13,7 +13,7 @@ public class EmailService {
 
     public void sendEmail(String to, String subject,String body)
     {
-        
+            try{   
             SimpleMailMessage message=new SimpleMailMessage();
             // message.setFrom("ilh@demomailtrap.com");
             message.setTo("parveenshahin038@gmail.com");
@@ -21,10 +21,12 @@ public class EmailService {
             message.setSubject("hello");
             message.setFrom("sch@demomailtrap.com");
             eMailSender.send(message);
-            // System.out.println(" sending the email ");
+            }catch(Exception e)
+            {
+                e.getStackTrace();
+                System.out.println(e);
+            }
         
     }
-    
-
 
 }

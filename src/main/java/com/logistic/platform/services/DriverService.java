@@ -48,12 +48,12 @@ public class DriverService {
             if (driver.getCurrentJob() != null) {
                 if ("Delivered".equals(status)) {
                     System.out.println("status changed");
-                driver.setStatus(status);
-                if ("Delivered".equals(status)) {
-                    driver.setCurrentJob(null);
-                    driver.setStatus("Available");
-                    driver.setAvailable(true);
-                }
+                    driver.setStatus(status);
+                    if ("Delivered".equals(status)) {
+                        driver.setCurrentJob(null);
+                        driver.setStatus("Available");
+                        driver.setAvailable(true);
+                    }
                 driverRepository.save(driver);
                 return true;
                 }

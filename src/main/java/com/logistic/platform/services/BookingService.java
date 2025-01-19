@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.logistic.platform.Helper.DistanceCalculator;
 import com.logistic.platform.models.Booking;
+import com.logistic.platform.models.BookingStatus;
 import com.logistic.platform.models.Driver;
 import com.logistic.platform.models.User;
 import com.logistic.platform.repository.BookingRepository;
@@ -67,10 +68,13 @@ public class BookingService {
         booking.setDropoffLon(dropoffLon);
         booking.setVehicleType(vehicleType);
         booking.setEstimatedCost(estimatedCost);
-        booking.setStatus("PENDING");
         booking.setCreatedAt(LocalDateTime.now());
         Driver dr=matchingService.findMatchingDriver(booking);
         System.out.println(dr);
+        if(dr==null)
+            booking.setStatus(BookingStatus.PENDING);
+        else 
+            booking.setStatus(BookingStatus.UNDER_PROCESS);
         booking.setDriver(dr);
         return bookingRepository.save(booking);
     }
@@ -87,7 +91,11 @@ public class BookingService {
 
         Booking booking = bookingOpt.get();
         booking.setDeliverAt(LocalDateTime.now());
-        booking.setStatus(status);
+        if(status.equalsIgnoreCase("under process"))
+            booking.setStatus(BookingStatus.UNDER_PROCESS);
+        else
+            booking.setStatus(BookingStatus.DELIVERED);
+            
         return bookingRepository.save(booking);
     }
 
