@@ -27,7 +27,7 @@ public class Package {
     private Long id;
     private  int trackingId;
     private String packageName;
-    private String currentStatus;
+    private PackageCuuentStatus currentStatus;
     private LocalDateTime lastUpdated;
 
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.logistic.platform.models.PackageStatus;
 import com.logistic.platform.models.Package;
+import com.logistic.platform.models.PackageCuuentStatus;
 import com.logistic.platform.repository.PackageRepository;
 import com.logistic.platform.repository.PackageStatusRepository;
 
@@ -32,7 +33,8 @@ public class PackageService {
 
     public void updatePackageStatus(int trackingId, String status, String location) {
         Package pkg = getPackageByTrackingId(trackingId);
-        pkg.setCurrentStatus(status);
+        PackageCuuentStatus packageCuuentStatus=PackageCuuentStatus.valueOf(status);
+        pkg.setCurrentStatus(packageCuuentStatus);
         pkg.setLastUpdated(LocalDateTime.now());
         packageRepository.save(pkg);
 
