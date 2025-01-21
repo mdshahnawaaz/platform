@@ -1,10 +1,7 @@
 package com.logistic.platform.services;
 
-import java.time.Duration;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,24 +55,24 @@ public class AdminService {
     }
 
     // Data Analytics
-    public long getTotalTripsCompleted() {
-        return bookingRepository.countByStatus("COMPLETED");
-    }
+    // public long getTotalTripsCompleted() {
+    //     return bookingRepository.countByStatus("COMPLETED");
+    // }
 
-    public double getAverageTripTime() {
-        List<Booking> completedBookings = bookingRepository.findByStatus("COMPLETED");
-        return completedBookings.stream()
-                .mapToLong(booking -> Duration.between(booking.getCreatedAt(), booking.getDeliverAt()).toMinutes())
-                .average()
-                .orElse(0);
-    }
+    // public double getAverageTripTime() {
+    //     List<Booking> completedBookings = bookingRepository.findByStatus("COMPLETED");
+    //     return completedBookings.stream()
+    //             .mapToLong(booking -> Duration.between(booking.getCreatedAt(), booking.getDeliverAt()).toMinutes())
+    //             .average()
+    //             .orElse(0);
+    // }
 
-    public Map<Object, Long> getDriverPerformance() {
-        List<Booking> completedBookings = bookingRepository.findByStatus("COMPLETED");
-        return completedBookings.stream()
-                .collect(Collectors.groupingBy(
-                        booking -> booking.getDriver().getId(),
-                        Collectors.counting()
-                ));
-    }
+    // public Map<Object, Long> getDriverPerformance() {
+    //     List<Booking> completedBookings = bookingRepository.findByStatus("COMPLETED");
+    //     return completedBookings.stream()
+    //             .collect(Collectors.groupingBy(
+    //                     booking -> booking.getDriver().getId(),
+    //                     Collectors.counting()
+    //             ));
+    // }
 }

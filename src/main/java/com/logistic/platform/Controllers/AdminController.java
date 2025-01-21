@@ -1,5 +1,6 @@
 package com.logistic.platform.Controllers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +25,34 @@ public class AdminController {
      @Autowired
     private AdminService adminService;
 
+    @GetMapping("/dashboard")
+    public String getDashboard(Model model) {
+        // Mock data for demonstration
+        model.addAttribute("completedTrips", 120);
+        model.addAttribute("pendingBookings", 15);
+        model.addAttribute("freeDrivers", 10);
+        model.addAttribute("bookedDrivers", 25);
+
+        // Driver ratings data
+        Map<String, Integer> driverRatings = new HashMap<>();
+        driverRatings.put("5 Stars", 50);
+        driverRatings.put("4 Stars", 30);
+        driverRatings.put("3 Stars", 15);
+        driverRatings.put("2 Stars", 5);
+        model.addAttribute("driverRatings", driverRatings);
+
+        // Trip status data
+        Map<String, Integer> tripStatus = new HashMap<>();
+        tripStatus.put("Completed", 120);
+        tripStatus.put("Pending", 15);
+        tripStatus.put("Canceled", 5);
+        model.addAttribute("tripStatus", tripStatus);
+
+        // Weekly revenue data
+        model.addAttribute("revenueData", List.of(500, 600, 450, 700, 800, 650, 900));
+
+        return "admin_dashboard";
+    }
     // Fleet Management
     @GetMapping("/bookings")
     public String getAllBooking(Model model) {
@@ -65,18 +94,18 @@ public class AdminController {
     }
 
     // Data Analytics
-    @GetMapping("/analytics/trips-completed")
-    public ResponseEntity<Long> getTotalTripsCompleted() {
-        return ResponseEntity.ok(adminService.getTotalTripsCompleted());
-    }
+    // @GetMapping("/analytics/trips-completed")
+    // public ResponseEntity<Long> getTotalTripsCompleted() {
+    //     return ResponseEntity.ok(adminService.getTotalTripsCompleted());
+    // }
 
-    @GetMapping("/analytics/average-trip-time")
-    public ResponseEntity<Double> getAverageTripTime() {
-        return ResponseEntity.ok(adminService.getAverageTripTime());
-    }
+    // @GetMapping("/analytics/average-trip-time")
+    // public ResponseEntity<Double> getAverageTripTime() {
+    //     return ResponseEntity.ok(adminService.getAverageTripTime());
+    // }
 
-    @GetMapping("/analytics/driver-performance")
-    public ResponseEntity<Map<Object, Long>> getDriverPerformance() {
-        return ResponseEntity.ok(adminService.getDriverPerformance());
-    }
+    // @GetMapping("/analytics/driver-performance")
+    // public ResponseEntity<Map<Object, Long>> getDriverPerformance() {
+    //     return ResponseEntity.ok(adminService.getDriverPerformance());
+    // }
 }
