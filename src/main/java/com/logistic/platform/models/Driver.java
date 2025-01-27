@@ -1,6 +1,6 @@
 package com.logistic.platform.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -47,8 +47,8 @@ public class Driver {
     @Column(nullable=false)
     private String status;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference
+    @OneToOne(mappedBy = "driver", cascade = CascadeType.ALL)
     private Booking currentJob;
 
     private int rating;

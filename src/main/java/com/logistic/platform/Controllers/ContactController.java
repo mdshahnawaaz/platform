@@ -23,7 +23,7 @@ public class ContactController {
     private ContactRepository contactRepository;
 
     @PostMapping("/submitcontact")
-    public void submitContactForm( @RequestParam("name") String name,
+    public String submitContactForm( @RequestParam("name") String name,
         @RequestParam("email") String email,
         @RequestParam("message") String message)
     {
@@ -34,6 +34,7 @@ public class ContactController {
         c.setStatus(Status.RESOLVED);
         System.out.println(c);
         contactRepository.save(c);
+        return "thank_you";
     }
 
     @GetMapping("/showContactMessage")

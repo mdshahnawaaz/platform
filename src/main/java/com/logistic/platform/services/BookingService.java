@@ -69,12 +69,13 @@ public class BookingService {
         booking.setVehicleType(vehicleType);
         booking.setEstimatedCost(estimatedCost);
         booking.setCreatedAt(LocalDateTime.now());
+        booking.setStatus(BookingStatus.PENDING);
         Driver dr=matchingService.findMatchingDriver(booking);
-        System.out.println(dr);
-        if(dr==null)
-            booking.setStatus(BookingStatus.PENDING);
-        else 
+        System.out.println(booking.getId());
+
+        if(dr!=null)
             booking.setStatus(BookingStatus.UNDER_PROCESS);
+        
         booking.setDriver(dr);
         return bookingRepository.save(booking);
     }

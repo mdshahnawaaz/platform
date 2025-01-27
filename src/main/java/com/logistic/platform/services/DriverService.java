@@ -50,9 +50,11 @@ public class DriverService {
                     System.out.println("status changed");
                     driver.setStatus(status);
                     if ("Delivered".equals(status)) {
+                        // bookingService.updateBookingStatus(driver.getCurrentJob().getId(), "Delivered");
                         driver.setCurrentJob(null);
                         driver.setStatus("Available");
                         driver.setAvailable(true);
+                        
                     }
                 driverRepository.save(driver);
                 return true;
