@@ -257,6 +257,7 @@
                 <a href="#services">Services</a>
                 <a href="#why-choose-us">Why Us</a>
                 <a href="#tracking">Tracking</a>
+                <a href="/logistics/contact/contact">Contact Us</a>
             </div>
         </nav>
     </header>
@@ -290,7 +291,7 @@
                         <div class="service-icon">📦</div>
                         <h3 class="service-title">Secure Packaging</h3>
                         <p>State-of-the-art packaging for ultimate protection</p>
-                        <button class="btn" onclick="callEndpoint('/secure-packaging')">Learn More</button>
+                        <button class="btn" onclick="callEndpoint('/logistics/secure_package')">Learn More</button>
                     </div>
                     <div class="service-item">
                         <div class="service-icon">📊</div>
@@ -316,7 +317,7 @@
                         <div class="reason-icon">🌍</div>
                         <h3 class="reason-title">Global Reach</h3>
                         <p>With operations in over 200 countries, we connect you to the world.</p>
-                        <button class="btn" onclick="callEndpoint('/learn-more/global-reach')">Learn More</button>
+                        <button class="btn" onclick="callEndpoint('/logistics/global_reach')">Learn More</button>
                     </div>
                     <div class="reason-item">
                         <div class="reason-icon">🔒</div>
@@ -352,10 +353,40 @@
             </div>
         </section>
     </main>
-
     <footer>
         <div class="container">
-            <p>&copy; <span th:text="${#dates.year(#dates.createNow())}">2024</span> LogiSwift. All rights reserved.</p>
+        <div class="footer-content">
+            <div class="footer-top">
+                <div class="footer-section">
+                    <h3>Company</h3>
+                    <p>LogiSwift - Transforming logistics with cutting-edge technology.</p>
+                </div>
+                <div class="footer-section footer-links">
+                    <h3>Quick Links</h3>
+                    <a href="#home">Home</a>
+                    <a href="#services">Services</a>
+                    <a href="#why-choose-us">Why Us</a>
+                    <a href="#tracking">Tracking</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: support@logiswift.com</p>
+                    <p>Phone: +1 234 567 890</p>
+                    <p>Address: 123 Logistics Lane, Transport City, TX</p>
+                </div>
+                <div class="footer-section social-media">
+                    <h3>Follow Us</h3>
+                    <a href="#"><i class="fab fa-facebook">Facebook</i></a>
+                    <a href="#"><i class="fab fa-twitter">Twitter</i></a>
+                    <a href="#"><i class="fab fa-linkedin">Linkedin</i></a>
+                    <a href="#"><i class="fab fa-instagram">Instagram</i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 LogiSwift. All rights reserved.</p>
+            </div>
+        </div>
         </div>
     </footer>
 

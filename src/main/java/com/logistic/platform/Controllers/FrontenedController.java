@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
+
 @Controller
 public class FrontenedController {
     
@@ -25,4 +26,14 @@ public class FrontenedController {
     {
         return "user_view";
     }
+    @GetMapping("/logistics/global_reach")
+    public String global_Reach() {
+        return "global_reach";
+    }
+
+    @GetMapping("/logistics/secure_package")
+    public String secure_Package() {
+        return "secure_package";
+    }
+    
 }
