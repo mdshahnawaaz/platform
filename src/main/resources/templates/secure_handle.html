@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unparalleled Security - Logistics</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card {
+            background: linear-gradient(145deg, #e6e6e6, #ffffff);
+            box-shadow: 10px 10px 30px #bebebe, -10px -10px 30px #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+  
+      :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --background-color: #0f0f1f;
+            --text-color: #ecf0f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(44, 62, 80, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body class="bg-gray-200">
+    <header>
+         <nav class="container">
+            <div class="logo">Intelligent Logistics Hub </div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="#services">Services</a>
+                <a href="#track">Tracking</a>
+                <a href="/logistics/contact/contact">Contact Us</a>
+            </div>
+        </nav>
+    </header>
+    
+    <main class="max-w-5xl mx-auto p-8 mt-8">
+      <br>
+      <br>
+          <section class="bg-gradient-to-r from-blue-900 to-blue-600 text-white p-6 text-center shadow-lg">
+              <h1 class="text-4xl font-extrabold">Unparalleled Security</h1>
+              <p class="text-lg mt-2">State-of-the-art tracking and secure handling for peace of mind</p>
+          </section>
+          <br>
+        <section class="card">
+            <h2 class="text-2xl font-bold text-blue-800">Real-time Tracking</h2>
+            <p class="text-gray-700 mt-2">Monitor your shipments every step of the way with our advanced tracking system.</p>
+            <img th:src="@{/images/real_time.webp}" alt="Tracking System" class="w-full mt-4 rounded-md shadow-lg">
+        </section>
+        <br>
+        <section class="card">
+            <h2 class="text-2xl font-bold text-blue-800">Secure Handling</h2>
+            <p class="text-gray-700 mt-2">Our security protocols ensure your goods are handled with the utmost care.</p>
+            <img th:src="@{/images/secure.jpeg}" alt="Secure Handling" class="w-full mt-4 rounded-md shadow-lg">
+        </section>
+        <br>
+        <section class="card col-span-2 text-center">
+            <h2 class="text-2xl font-bold text-blue-800">AI-Powered Risk Management</h2>
+            <p class="text-gray-700 mt-2">We use AI-driven analytics to detect and prevent security threats before they happen.</p>
+            <img th:src="@{/images/ai_powered.jpeg.webp}" alt="AI Security" class="w-full mt-4 rounded-md shadow-lg">
+        </section>
+        <br>
+        <section class="card col-span-2 text-center">
+            <h2 class="text-2xl font-bold text-blue-800">Customer Testimonials</h2>
+            <p class="text-gray-700 mt-2 italic">"Our goods have never been more secure! The tracking system is fantastic." - John Doe, Business Owner</p>
+            <p class="text-gray-700 mt-2 italic">"Fast and reliable logistics with top-notch security measures!" - Sarah Lee, CEO</p>
+        </section>
+        <br>
+        <section class="card col-span-2 text-center">
+            <h2 class="text-2xl font-bold text-blue-800">Security Certifications & Compliance</h2>
+            <p class="text-gray-700 mt-2">We adhere to industry-leading security standards such as ISO 27001, GDPR, and PCI-DSS.</p>
+        </section>
+        <br>
+        <section class="card col-span-2 text-center">
+            <h2 class="text-2xl font-bold text-blue-800">24/7 Customer Support</h2>
+            <p class="text-gray-700 mt-2">Need assistance? Our support team is available via live chat, email, and phone.</p>
+        </section>
+        <br>
+        <section class="card col-span-2 text-center">
+            <h2 class="text-2xl font-bold text-blue-800">Track Your Shipment</h2><br>
+            <a th:href="@{/logistics/tracking/track}" class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-8 py-3 rounded-lg text-lg font-semibold shadow-md hover:scale-105 transition">Track Now</a>
+        </section>
+    </main>
+
+    <footer class="text-center text-gray-600 p-6 mt-8 border-t shadow-md">
+        <p>&copy; 2025 On-Demand Logistics. All rights reserved.</p>
+    </footer>
+</body>
+</html>

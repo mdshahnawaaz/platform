@@ -35,5 +35,10 @@ public class FrontenedController {
     public String secure_Package() {
         return "secure_package";
     }
+
+    @GetMapping("/logistics/secure_handle")
+    public String secure_Handle() {
+        return "secure_handle";
+    }
     
 }
