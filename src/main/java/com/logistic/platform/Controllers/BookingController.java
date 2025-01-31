@@ -30,7 +30,7 @@ public class BookingController {
                                                     @RequestParam double dropoffLat,
                                                     @RequestParam double dropoffLon,
                                                     @RequestParam String vehicleType,
-                                                    Model model) {
+                                                    Model model) {    
         Booking booking = bookingService.createBooking(userId, pickupLat, pickupLon, dropoffLat,dropoffLon, vehicleType);
         System.out.println("bookng details are" + booking);
         if(booking.getDriver()!=null)

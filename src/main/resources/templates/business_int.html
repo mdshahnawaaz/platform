@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Integration - On-Demand Logistics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --background-color: #0f0f1f;
+            --text-color: #ecf0f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(44, 62, 80, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body  class="text-white-900">
+   <header>
+        <nav class="container">
+            <div class="logo">Intelligent Logistics Hub</div>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#services">Services</a>
+                <a href="#why-choose-us">Why Us</a>
+                <a href="#tracking">Tracking</a>
+                <a href="/logistics/contact/contact">Contact Us</a>
+            </div>
+        </nav>
+    </header>
+  <br><br>
+    
+    <div class="container mx-auto py-10 px-5">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-5xl font-bold text-blue-600">Business Integration</h1>
+            <p class="text-lg  mt-2 max-w-3xl mx-auto">Enhance your logistics capabilities by integrating seamlessly with our cutting-edge platform. Automate shipments, streamline operations, and optimize costs with ease.</p>
+        </div>
+        
+        <!-- Features Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-lg card">
+                <h2 class="text-2xl font-semibold text-blue-500">Real-time Tracking</h2>
+                <p class="text-gray-600 mt-2">Monitor shipments live with GPS and dynamic route optimization.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg card">
+                <h2 class="text-2xl font-semibold text-blue-500">Scalable & Secure</h2>
+                <p class="text-gray-600 mt-2">Our robust infrastructure ensures security and handles high transaction volumes efficiently.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg card">
+                <h2 class="text-2xl font-semibold text-blue-500">Seamless API Integration</h2>
+                <p class="text-gray-600 mt-2">Connect your system effortlessly using our well-documented APIs.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg card">
+                <h2 class="text-2xl font-semibold text-blue-500">Automated Scheduling</h2>
+                <p class="text-gray-600 mt-2">Set up automated pickup and delivery schedules to improve efficiency.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg card">
+                <h2 class="text-2xl font-semibold text-blue-500">Cost Optimization</h2>
+                <p class="text-gray-600 mt-2">Reduce logistics costs with AI-driven route planning and predictive analytics.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg card">
+                <h2 class="text-2xl font-semibold text-blue-500">24/7 Support</h2>
+                <p class="text-gray-600 mt-2">Get round-the-clock assistance for seamless logistics operations.</p>
+            </div>
+        </div>
+        
+        <!-- How It Works Section -->
+        <div class="mt-16 text-center">
+            <h2 class="text-3xl font-bold ">How It Works</h2>
+            <div class="mt-6 max-w-4xl mx-auto">
+                <p><strong>Step 1:</strong> Register and get API credentials.</p>
+                <p><strong>Step 2:</strong> Integrate with our logistics API.</p>
+                <p><strong>Step 3:</strong> Start automating shipments and tracking deliveries.</p>
+            </div>
+        </div>
+        
+        <!-- CTA Section -->
+        <div class="mt-12 text-center">
+            <p class="text-lg">Want to integrate with us? Contact us today!</p>
+            <a href="/logistics/contact/contact" class="mt-4 inline-block bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-blue-700 transition">Get Started</a>
+        </div>
+    </div>
+    
+</body>
+</html>

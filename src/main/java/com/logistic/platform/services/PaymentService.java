@@ -47,13 +47,16 @@ public class PaymentService {
                                 .build();
 
             // Create new session
+            System.out.println(sceretKey);
         Session session = null;
             try {
                 session = Session.create(params);
             } catch (StripeException e) {
                 //log the error
+                e.printStackTrace();
+                throw new RuntimeException("Stripe session creation failed: " + e.getMessage());
             }
-
+            System.out.println(session);
             return StripeResponse.builder()
                     .status("SUCCESS")
                     .message("Payment session created ")

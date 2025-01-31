@@ -40,5 +40,10 @@ public class FrontenedController {
     public String secure_Handle() {
         return "secure_handle";
     }
+
+    @GetMapping("/logistics/business_int")
+    public String business_Int() {
+        return "business_int";
+    }
     
 }

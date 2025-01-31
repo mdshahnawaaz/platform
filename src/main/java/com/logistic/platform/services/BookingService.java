@@ -59,7 +59,6 @@ public class BookingService {
         }
 
         BigDecimal estimatedCost= pricingService.calculatePrice(distance, vehicleType, demandFactor);
-        
         Booking booking = new Booking();
         booking.setUser(user);
         booking.setPickuplat(pickupLat);
