@@ -45,5 +45,10 @@ public class FrontenedController {
     public String business_Int() {
         return "business_int";
     }
+
+    @GetMapping("/logistics/eco_friendly")
+    public String eco_Friendlyt() {
+        return "eco_friendly";
+    }
     
 }

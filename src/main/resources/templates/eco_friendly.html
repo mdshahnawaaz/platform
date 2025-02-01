@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Friendly Solutions - Logistics</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card {
+            background: linear-gradient(145deg, #e6f7e6, #ffffff);
+            box-shadow: 10px 10px 30px #c4c4c4, -10px -10px 30px #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --background-color: #0f0f1f;
+            --text-color: #ecf0f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(44, 62, 80, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        .logo-container {
+            display: flex;
+            gap: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+        }
+        .nav-logo {
+            height: 50px; /* Adjust size as needed */
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.3s ease-in-out;
+        }
+        .nav-logo:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body >
+  
+    <header>
+         <nav class="container">
+            <div class="logo-container">
+            <img th:src="@{/images/abc.webp}" alt="Company Logo" class="nav-logo"><span>Intelligent Logistics Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="#services">Services</a>
+                <a href="#track">Tracking</a>
+                <a href="/logistics/contact/contact">Contact Us</a>
+            </div>
+        </nav>
+    </header>   
+    <main class="max-w-5xl mx-auto p-8 mt-8">
+          <section>
+            <div class="bg-gradient-to-r from-green-900 to-green-600 text-white p-6 text-center shadow-lg">
+              <h1 class="text-4xl font-extrabold">Eco-Friendly Solutions</h1>
+              <p class="text-lg mt-2">Committed to sustainable practices and reducing our carbon footprint</p>
+            </div>
+        </section>
+        <br>
+        <section class="card">
+            <h2 class="text-2xl font-bold text-green-800">Sustainable Transportation</h2>
+            <p class="text-gray-700 mt-2">Our fleet includes electric and hybrid vehicles to minimize environmental impact.</p>
+            <img th:src="@{/images/green-transport.png}" alt="Sustainable Transport" class="w-full mt-4 rounded-md shadow-lg">
+        </section>
+           <br>
+        <section class="card">
+            <h2 class="text-2xl font-bold text-green-800">Carbon Offset Initiatives</h2>
+            <p class="text-gray-700 mt-2">We actively invest in reforestation and renewable energy projects to offset emissions.</p>
+            <img th:src="@{/images/carbon-offset.png}" alt="Carbon Offset" class="w-full mt-4 rounded-md shadow-lg">
+        </section>
+           <br>
+        <section class="card col-span-2 text-center" onclick="toggleInfo('innovation-info')">
+            <h2 class="text-2xl font-bold text-green-800">Green Technology Innovations</h2>
+            <p class="text-gray-700 mt-2">Click to explore our latest eco-tech solutions.</p>
+            <div id="innovation-info">
+                <p class="text-gray-700 mt-2">Our AI-powered logistics system optimizes routes to save fuel and cut emissions.</p>
+                <img th:src="@{/images/green-tech.png}" alt="Green Technology" class="w-full mt-4 rounded-md shadow-lg">
+            </div>
+        </section>
+             <br>
+        <section class="card col-span-2 text-center">
+            <h2 class="text-2xl font-bold text-green-800">Eco-Friendly Packaging</h2>
+            <p class="text-gray-700 mt-2">We use biodegradable and recyclable packaging materials to reduce waste.</p>
+            <img th:src="@{/images/eco-packaging.png}" alt="Eco Packaging" class="w-full mt-4 rounded-md shadow-lg">
+        </section>
+               <br>
+        <section class="card col-span-2 text-center">
+            <h2 class="text-2xl font-bold text-green-800">Join Our Green Initiative</h2>
+            <p class="text-gray-700 mt-2">Partner with us to support sustainable logistics solutions and make a difference.</p>
+            <br>
+            <a th:href="@{/join-green}" class="bg-gradient-to-r from-green-600 to-green-800 text-white px-8 py-3 rounded-lg text-lg font-semibold shadow-md hover:scale-105 transition">Get Involved</a>
+        </section>
+    </main>
+
+    <footer class="text-center text-gray-600 p-6 mt-8 border-t shadow-md">
+        <p>&copy; 2025 On-Demand Logistics. All rights reserved.</p>
+    </footer>
+</body>
+</html>
