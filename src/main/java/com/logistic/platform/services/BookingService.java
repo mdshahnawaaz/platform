@@ -1,26 +1,23 @@
 package com.logistic.platform.services;
 
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
-import com.logistic.platform.Helper.DistanceCalculator;
 import com.logistic.platform.models.Booking;
+import com.logistic.platform.models.BookingCreationResult;
 import com.logistic.platform.models.BookingStatus;
 import com.logistic.platform.models.Driver;
+import com.logistic.platform.models.PricingQuote;
 import com.logistic.platform.models.User;
 import com.logistic.platform.repository.BookingRepository;
-import com.logistic.platform.repository.DriverRepository;
 import com.logistic.platform.repository.UserRepository;
 
 @Service
-@Configuration
 public class BookingService {
 
     @Autowired
@@ -33,12 +30,9 @@ public class BookingService {
     private PricingService pricingService;
 
     @Autowired
-    private DriverRepository driverRepository;
-
-    @Autowired
     private MatchingService matchingService;
 
-    public Booking createBooking(int userId, double pickupLat, double pickupLon, double dropoffLat,double dropoffLon, String vehicleType) {
+    public BookingCreationResult createBooking(int userId, double pickupLat, double pickupLon, double dropoffLat,double dropoffLon, String vehicleType) {
         Optional<User> userOpt = userRepository.findById(userId);
         if (!userOpt.isPresent()) {
             throw new RuntimeException("User not found");
@@ -46,19 +40,13 @@ public class BookingService {
 
         User user = userOpt.get();
 
-        double distance = DistanceCalculator.calculateDistance(pickupLat, pickupLon, dropoffLat, dropoffLon);
-        int k=driverRepository.countFreeDrivers();
-        int demandFactor=1;
-        if(k>10)
-        {
-            demandFactor=2;
-        }
-        else if(k>=5)
-        {
-            demandFactor=3;
-        }
-
-        BigDecimal estimatedCost= pricingService.calculatePrice(distance, vehicleType, demandFactor);
+        PricingQuote pricingQuote = pricingService.buildQuote(
+                pickupLat,
+                pickupLon,
+                dropoffLat,
+                dropoffLon,
+                vehicleType,
+                null);
         Booking booking = new Booking();
         booking.setUser(user);
         booking.setPickuplat(pickupLat);
@@ -66,9 +54,11 @@ public class BookingService {
         booking.setDropoffLat(dropoffLat);
         booking.setDropoffLon(dropoffLon);
         booking.setVehicleType(vehicleType);
-        booking.setEstimatedCost(estimatedCost);
+        booking.setEstimatedCost(pricingQuote.estimatedPrice());
         booking.setCreatedAt(LocalDateTime.now());
         booking.setStatus(BookingStatus.PENDING);
+        booking = bookingRepository.save(booking);
+
         Driver dr=matchingService.findMatchingDriver(booking);
         System.out.println(booking.getId());
 
@@ -76,7 +66,8 @@ public class BookingService {
             booking.setStatus(BookingStatus.UNDER_PROCESS);
         
         booking.setDriver(dr);
-        return bookingRepository.save(booking);
+        booking = bookingRepository.save(booking);
+        return new BookingCreationResult(booking, pricingQuote);
     }
 
     public Optional<Booking> getBooking(int id) {

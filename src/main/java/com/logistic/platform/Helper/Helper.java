@@ -1,11 +1,11 @@
 package com.logistic.platform.Helper;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import com.logistic.platform.models.Booking;
 import com.logistic.platform.models.Driver;
 
-@Configuration
+@Component
 public class Helper {
      private static final double MAX_RATING = 5.0;
     private static final double MAX_DISTANCE = 20.0; 

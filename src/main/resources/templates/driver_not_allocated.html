@@ -108,6 +108,11 @@
             <p>Pickup Location: <span th:text="${pickupLat}+ ' , ' + ${pickupLon}">[Pickup Location]</span></p>
             <p>Drop-off Location: <span th:text="${dropoffLat} + ' , ' +  ${dropoffLon}">[Drop-off Location]</span></p>
             <p>Price: <span th:text="${estimate_price}">[Price]</span></p>
+            <p>Distance: <span th:text="${pricingQuote.distanceKm}">[Distance]</span> km</p>
+            <p>Demand Area: <span th:text="${pricingQuote.demandLevel}">[Demand Area]</span></p>
+            <p>Demand Factor: <span th:text="${pricingQuote.demandFactor}">[Demand Factor]</span>x</p>
+            <p>Pricing Note: <span th:text="${pricingQuote.pricingMessage}">[Pricing Note]</span></p>
+            <p>Area Insight: <span th:text="${pricingQuote.areaMessage}">[Area Insight]</span></p>
             <p>Status: <span>Driver not allocated</span></p>
         </div>
 

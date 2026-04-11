@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.geo.Point;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ public class MatchingService {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+
+    @Value("${app.redis.enabled:false}")
+    private boolean redisEnabled;
 
     @Autowired
     private Helper helper;
@@ -84,12 +89,23 @@ public class MatchingService {
     }
 
     @Scheduled(fixedRate = 10000) // Update every 10 seconds
-public void updateDriverLocations() {
-    List<Driver> activeDrivers = driverRepository.findByStatus("Available");
-    for (Driver driver : activeDrivers) {
-        redisTemplate.opsForGeo().add(DRIVER_GEO_KEY, 
-            new Point(driver.getDriverLat(), driver.getDriverLon()), String.valueOf(driver.getId()));
+    public void updateDriverLocations() {
+        if (!redisEnabled) {
+            return;
+        }
+
+        List<Driver> activeDrivers = driverRepository.findByStatus("Available");
+        try {
+            for (Driver driver : activeDrivers) {
+                redisTemplate.opsForGeo().add(
+                        DRIVER_GEO_KEY,
+                        new Point(driver.getDriverLat(), driver.getDriverLon()),
+                        String.valueOf(driver.getId()));
+            }
+        } catch (RedisConnectionFailureException ex) {
+            // Keep the app usable when Redis is not available in local/dev environments.
+            System.out.println("Redis is unavailable; skipping driver geo sync.");
+        }
     }
-}
 
 }

@@ -112,27 +112,136 @@
             color: var(--primary-color);
             transform: translateZ(40px);
         }
+
+        .quote-card {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .demand-badge {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.45rem 0.9rem;
+            border-radius: 999px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
+        .demand-high {
+            background: rgba(231, 76, 60, 0.2);
+            color: #ff8c7a;
+        }
+
+        .demand-normal {
+            background: rgba(74, 144, 226, 0.2);
+            color: #7db8ff;
+        }
+
+        .demand-low {
+            background: rgba(46, 204, 113, 0.2);
+            color: #6ef0a0;
+        }
+
+        .quote-note {
+            margin-top: 1rem;
+            line-height: 1.5;
+            color: rgba(236, 240, 241, 0.9);
+        }
+
+        .quote-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .quote-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.55rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .quote-row:last-child {
+            border-bottom: none;
+        }
+
+        .booking-submit[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
     </style>
     <script>
-        function getEstimate() {
+        async function getEstimate() {
             const pickupLat = document.getElementById('pickupLatitude').value;
             const pickupLon = document.getElementById('pickupLongitude').value;
             const dropoffLat = document.getElementById('dropoffLatitude').value;
             const dropoffLon = document.getElementById('dropoffLongitude').value;
             const vehicleType = document.getElementById('vehicleType').value;
+            const estimateText = document.getElementById('estimatedPrice');
+            const quoteCard = document.getElementById('quoteCard');
+            const bookButton = document.getElementById('bookButton');
 
-            fetch(`/logistics/pricing/estimate?pickupLat=${pickupLat}&pickupLon=${pickupLon}&dropoffLat=${dropoffLat}&dropoffLon=${dropoffLon}&vehicleType=${vehicleType}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('estimatedPrice').innerText = `Estimated Price: $${data}`;
-                    // Set hidden input values for booking
-                    document.getElementById('hiddenPickupLat').value = pickupLat;
-                    document.getElementById('hiddenPickupLon').value = pickupLon;
-                    document.getElementById('hiddenDropoffLat').value = dropoffLat;
-                    document.getElementById('hiddenDropoffLon').value = dropoffLon;
-                    document.getElementById('hiddenVehicleType').value = vehicleType;
-                })
-                .catch(error => console.error('Error fetching estimate:', error));
+            if (!pickupLat || !pickupLon || !dropoffLat || !dropoffLon || !vehicleType) {
+                estimateText.innerText = 'Please fill all ride details before requesting an estimate.';
+                quoteCard.style.display = 'none';
+                bookButton.disabled = true;
+                return;
+            }
+
+            estimateText.innerText = 'Fetching AI fare estimate...';
+
+            try {
+                const response = await fetch(`/logistics/pricing/estimate?pickupLat=${pickupLat}&pickupLon=${pickupLon}&dropoffLat=${dropoffLat}&dropoffLon=${dropoffLon}&vehicleType=${vehicleType}`);
+                if (!response.ok) {
+                    throw new Error('Estimate request failed');
+                }
+                const quote = await response.json();
+
+                estimateText.innerText = `Estimated Price: Rs ${quote.estimatedPrice}`;
+                document.getElementById('quoteDistance').innerText = `${quote.distanceKm} km`;
+                document.getElementById('quoteVehicleType').innerText = quote.vehicleType;
+                document.getElementById('quoteDemandFactor').innerText = `${quote.demandFactor}x`;
+                document.getElementById('quotePredictedDemand').innerText = quote.predictedDemand;
+                document.getElementById('quoteSurge').innerText = quote.surgeExpected ? 'Yes' : 'No';
+                document.getElementById('quoteDemandLevel').innerText = `${quote.demandLevel} DEMAND`;
+                document.getElementById('quoteModelSource').innerText = quote.modelSource;
+                document.getElementById('quoteCostPerKm').innerText = `Rs ${quote.costPerKm}`;
+                document.getElementById('quoteBaseRate').innerText = `Rs ${quote.baseRate}`;
+                document.getElementById('quoteEstimatedPrice').innerText = `Rs ${quote.estimatedPrice}`;
+                document.getElementById('quotePricingMessage').innerText = quote.pricingMessage;
+                document.getElementById('quoteAreaMessage').innerText = quote.areaMessage;
+                document.getElementById('quoteAdjustment').innerText = `${quote.priceAdjustmentPercent}%`;
+
+                const demandBadge = document.getElementById('quoteDemandBadge');
+                demandBadge.className = 'demand-badge';
+                if (quote.demandLevel === 'HIGH') {
+                    demandBadge.classList.add('demand-high');
+                } else if (quote.demandLevel === 'LOW') {
+                    demandBadge.classList.add('demand-low');
+                } else {
+                    demandBadge.classList.add('demand-normal');
+                }
+
+                document.getElementById('hiddenPickupLat').value = pickupLat;
+                document.getElementById('hiddenPickupLon').value = pickupLon;
+                document.getElementById('hiddenDropoffLat').value = dropoffLat;
+                document.getElementById('hiddenDropoffLon').value = dropoffLon;
+                document.getElementById('hiddenVehicleType').value = vehicleType;
+
+                quoteCard.style.display = 'block';
+                bookButton.disabled = false;
+            } catch (error) {
+                estimateText.innerText = 'Unable to fetch estimate right now. Please try again.';
+                quoteCard.style.display = 'none';
+                bookButton.disabled = true;
+                console.error('Error fetching estimate:', error);
+            }
         }
     </script>
 </head>
@@ -170,6 +279,25 @@
 
         <div id="estimatedPrice"></div>
 
+        <div id="quoteCard" class="quote-card" style="display: none;">
+            <h3>Fare Breakdown</h3>
+            <span id="quoteDemandBadge" class="demand-badge demand-normal">
+                <span id="quoteDemandLevel">NORMAL DEMAND</span>
+            </span>
+            <div class="quote-row"><span>Distance</span><span id="quoteDistance">-</span></div>
+            <div class="quote-row"><span>Vehicle</span><span id="quoteVehicleType">-</span></div>
+            <div class="quote-row"><span>Base Rate</span><span id="quoteBaseRate">-</span></div>
+            <div class="quote-row"><span>Cost Per Km</span><span id="quoteCostPerKm">-</span></div>
+            <div class="quote-row"><span>Demand Factor</span><span id="quoteDemandFactor">-</span></div>
+            <div class="quote-row"><span>Price Adjustment</span><span id="quoteAdjustment">-</span></div>
+            <div class="quote-row"><span>Predicted Demand</span><span id="quotePredictedDemand">-</span></div>
+            <div class="quote-row"><span>Prediction Source</span><span id="quoteModelSource">-</span></div>
+            <div class="quote-row"><span>Surge Expected</span><span id="quoteSurge">-</span></div>
+            <div class="quote-row"><span>Estimated Price</span><span id="quoteEstimatedPrice">-</span></div>
+            <p id="quotePricingMessage" class="quote-note">-</p>
+            <p id="quoteAreaMessage" class="quote-note">-</p>
+        </div>
+
         <h2>Book Your Ride</h2>
         <form th:action="@{/logistics/bookings}" method="post">
             <input type="hidden" name="userId" value="1"/>
@@ -178,7 +306,7 @@
             <input type="hidden" name="dropoffLat" id="hiddenDropoffLat"/>
             <input type="hidden" name="dropoffLon" id="hiddenDropoffLon"/>
             <input type="hidden" name="vehicleType" id="hiddenVehicleType"/>
-            <button type="submit">Book Ride</button>
+            <button type="submit" id="bookButton" class="booking-submit" disabled>Book Ride</button>
         </form>
     </div>
 </body>

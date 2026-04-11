@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.logistic.platform.models.Booking;
+import com.logistic.platform.models.BookingCreationResult;
+import com.logistic.platform.models.PricingQuote;
 import com.logistic.platform.services.BookingService;
 
 
@@ -20,7 +22,7 @@ import com.logistic.platform.services.BookingService;
 public class BookingController {
 
     
-     @Autowired
+    @Autowired
     private BookingService bookingService;
 
     @PostMapping
@@ -31,7 +33,15 @@ public class BookingController {
                                                     @RequestParam double dropoffLon,
                                                     @RequestParam String vehicleType,
                                                     Model model) {    
-        Booking booking = bookingService.createBooking(userId, pickupLat, pickupLon, dropoffLat,dropoffLon, vehicleType);
+        BookingCreationResult bookingCreationResult = bookingService.createBooking(
+                userId,
+                pickupLat,
+                pickupLon,
+                dropoffLat,
+                dropoffLon,
+                vehicleType);
+        Booking booking = bookingCreationResult.booking();
+        PricingQuote pricingQuote = bookingCreationResult.pricingQuote();
         System.out.println("bookng details are" + booking);
         if(booking.getDriver()!=null)
         {
@@ -40,6 +50,7 @@ public class BookingController {
             model.addAttribute("driver_name", booking.getDriver().getName());
             model.addAttribute("driver_rating", booking.getDriver().getRating());
             model.addAttribute("estimate_price", booking.getEstimatedCost());
+            model.addAttribute("pricingQuote", pricingQuote);
             return "user_booked";
         }
 
@@ -48,6 +59,7 @@ public class BookingController {
             model.addAttribute("dropoffLat", dropoffLat);
             model.addAttribute("dropoffLon", dropoffLon);
             model.addAttribute("estimate_price", booking.getEstimatedCost());
+            model.addAttribute("pricingQuote", pricingQuote);
             return "driver_not_allocated";
         
         // return ResponseEntity.ok(booking);

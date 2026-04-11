@@ -1,26 +1,14 @@
 package com.logistic.platform.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Setter
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "drivers")
 public class Driver {
@@ -47,8 +35,8 @@ public class Driver {
     @Column(nullable=false)
     private String status;
 
-    @JsonManagedReference
-    @OneToOne(mappedBy = "driver", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "current_job_booking_id")
     private Booking currentJob;
 
     private int rating;
@@ -59,4 +47,126 @@ public class Driver {
     @Column(nullable=false)
     private Double driverLon;
 
+    public Driver() {
+    }
+
+    public Driver(int id, String name, String licenseNumber, String vehicleType, String vehicleNumber, boolean available,
+            String status, Booking currentJob, int rating, Double driverLat, Double driverLon) {
+        this.id = id;
+        this.name = name;
+        this.licenseNumber = licenseNumber;
+        this.vehicleType = vehicleType;
+        this.vehicleNumber = vehicleNumber;
+        this.available = available;
+        this.status = status;
+        this.currentJob = currentJob;
+        this.rating = rating;
+        this.driverLat = driverLat;
+        this.driverLon = driverLon;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
+
+    public String getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(String vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+
+    public String getVehicleNumber() {
+        return vehicleNumber;
+    }
+
+    public void setVehicleNumber(String vehicleNumber) {
+        this.vehicleNumber = vehicleNumber;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Booking getCurrentJob() {
+        return currentJob;
+    }
+
+    public void setCurrentJob(Booking currentJob) {
+        this.currentJob = currentJob;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public Double getDriverLat() {
+        return driverLat;
+    }
+
+    public void setDriverLat(Double driverLat) {
+        this.driverLat = driverLat;
+    }
+
+    public Double getDriverLon() {
+        return driverLon;
+    }
+
+    public void setDriverLon(Double driverLon) {
+        this.driverLon = driverLon;
+    }
+
+    @Override
+    public String toString() {
+        return "Driver{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", licenseNumber='" + licenseNumber + '\'' +
+                ", vehicleType='" + vehicleType + '\'' +
+                ", vehicleNumber='" + vehicleNumber + '\'' +
+                ", available=" + available +
+                ", status='" + status + '\'' +
+                ", currentJobId=" + (currentJob != null ? currentJob.getId() : null) +
+                ", rating=" + rating +
+                ", driverLat=" + driverLat +
+                ", driverLon=" + driverLon +
+                '}';
+    }
 }

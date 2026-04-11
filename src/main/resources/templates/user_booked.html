@@ -226,6 +226,12 @@
     <p><strong>Name:</strong> <span th:text="${driver_name}">John Doe</span></p>
     <p><strong>Vehicle:</strong> <span th:text="${driver_vehicleType}">Toyota Prius</span></p>
     <p><strong>Rating:</strong> <span th:text="${driver_rating}">4.8</span></p>
+    <p><strong>Distance:</strong> <span th:text="${pricingQuote.distanceKm}">12.40</span> km</p>
+    <p><strong>Demand Area:</strong> <span th:text="${pricingQuote.demandLevel}">NORMAL</span></p>
+    <p><strong>Demand Factor:</strong> <span th:text="${pricingQuote.demandFactor}">1.00</span>x</p>
+    <p><strong>Surge Expected:</strong> <span th:text="${pricingQuote.surgeExpected ? 'Yes' : 'No'}">No</span></p>
+    <p><strong>Pricing Note:</strong> <span th:text="${pricingQuote.pricingMessage}">Demand is normal right now.</span></p>
+    <p><strong>Area Insight:</strong> <span th:text="${pricingQuote.areaMessage}">This route is in a normal demand area.</span></p>
      
     <div class="btn-container">
         <button class="btn" onclick="showBillingDetails()">Price: <span th:text="${estimate_price}">$50.00</span></button>
@@ -234,9 +240,11 @@
     </div>
 
     <div id="billingDetails" class="billing-details">
-        <p><strong>Actual Cost:</strong> $40.00</p>
-        <p><strong>Platform Charge:</strong> $10.00</p>
-        <p><strong>Total Amount:</strong> $50.00</p>
+        <p><strong>Base Rate:</strong> Rs <span th:text="${pricingQuote.baseRate}">5.00</span></p>
+        <p><strong>Cost Per Km:</strong> Rs <span th:text="${pricingQuote.costPerKm}">2.00</span></p>
+        <p><strong>Price Adjustment:</strong> <span th:text="${pricingQuote.priceAdjustmentPercent}">0</span>%</p>
+        <p><strong>Predicted Demand:</strong> <span th:text="${pricingQuote.predictedDemand}">1.0</span></p>
+        <p><strong>Total Amount:</strong> Rs <span th:text="${pricingQuote.estimatedPrice}">50.00</span></p>
     </div>
 
     <script>
