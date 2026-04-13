@@ -1,6 +1,7 @@
 package com.logistic.platform.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,22 +13,27 @@ public class EmailService {
     @Autowired
     private JavaMailSender eMailSender;
 
+    @Value("${app.mail.from:sch@demomailtrap.com}")
+    private String fromAddress;
+
+    @Value("${app.mail.test-recipient:}")
+    private String testRecipient;
+
     public void sendEmail(String to, String subject,String body)
     {
-            try{   
+            try{
             SimpleMailMessage message=new SimpleMailMessage();
-            // message.setFrom("ilh@demomailtrap.com");
-            message.setTo("parveenshahin038@gmail.com");
-            message.setText("hi ,aksie ho kaise chal rahah");
-            message.setSubject("hello");
-            message.setFrom("sch@demomailtrap.com");
+            String recipient = (testRecipient != null && !testRecipient.isBlank()) ? testRecipient : to;
+            System.out.println("EmailService sending mail to: " + recipient + " (requested user email: " + to + ")");
+            message.setTo(recipient);
+            message.setText(body);
+            message.setSubject(subject);
+            message.setFrom(fromAddress);
             eMailSender.send(message);
             }catch(MailException e)
             {
-                e.getStackTrace();
-                System.out.println(e);
+                throw e;
             }
-        
     }
 
 }

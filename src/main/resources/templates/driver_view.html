@@ -3,148 +3,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thyme Leaf Driver Profile</title>
+    <title>Driver Workload</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --ink: #132238;
+            --muted: #607086;
+            --bg: #f3f7fb;
+            --surface: #ffffff;
+            --line: rgba(19, 34, 56, 0.08);
+            --primary: #0f766e;
+            --accent: #2563eb;
+            --success: #138a5b;
+            --warning: #d97706;
+            --shadow: 0 18px 44px rgba(19, 34, 56, 0.10);
+        }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1000px;
+            margin: 0;
+            font-family: 'Manrope', sans-serif;
+            color: var(--ink);
+            background: linear-gradient(180deg, #f8fbff, var(--bg));
+        }
+
+        .layout {
+            max-width: 1320px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f4f4f4;
+            padding: 26px 20px 42px;
         }
-        .container {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+        .back-link {
+            display: inline-flex;
+            margin-bottom: 16px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
         }
-        h1, h2 {
-            color: #2c3e50;
+
+        .hero,
+        .metric-card,
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
         }
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .profile-picture {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin-right: 20px;
-            background-color: #3498db;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 36px;
-            font-weight: bold;
-        }
-        .stats {
+
+        .hero {
+            padding: 28px;
             display: flex;
             justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
             margin-bottom: 20px;
         }
-        .stat-item {
-            text-align: center;
-            flex: 1;
+
+        h1, h2, h3 {
+            margin: 0;
+            font-family: 'Space Grotesk', sans-serif;
         }
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #3498db;
+
+        .hero p,
+        .helper,
+        td {
+            color: var(--muted);
         }
+
+        .profile {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, var(--primary), #22b8a9);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 1.8rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+        }
+
+        .hero-meta {
+            min-width: 260px;
+            padding: 18px 20px;
+            border-radius: 24px;
+            background: #f7fafc;
+        }
+
+        .hero-meta strong {
+            display: block;
+            font-size: 1.5rem;
+            margin-top: 10px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            padding: 22px;
+        }
+
+        .metric-card strong {
+            display: block;
+            font-size: 2rem;
+            margin: 12px 0 8px;
+        }
+
+        .panel {
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .flash {
+            padding: 16px 18px;
+            border-radius: 18px;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+
+        .flash-success {
+            background: rgba(19, 138, 91, 0.12);
+            color: var(--success);
+        }
+
+        .flash-error {
+            background: rgba(217, 119, 6, 0.12);
+            color: var(--warning);
+        }
+
+        .inline-form {
+            display: grid;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .inline-form input {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid rgba(19, 34, 56, 0.12);
+            padding: 12px 14px;
+            font: inherit;
+        }
+
+        .action-btn {
+            border: none;
+            border-radius: 14px;
+            padding: 12px 14px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .action-stack {
+            min-width: 240px;
+        }
+
+        .action-note {
+            display: block;
+            margin-top: 8px;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        .send-btn {
+            background: var(--accent);
+            color: white;
+        }
+
+        .complete-btn {
+            background: var(--primary);
+            color: white;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
-        th, td {
-            padding: 12px;
+
+        th,
+        td {
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(19, 34, 56, 0.08);
         }
+
         th {
-            background-color: #3498db;
-            color: #fff;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--ink);
         }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+
+        .status-chip {
+            display: inline-flex;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: #f4f7fb;
+            font-weight: 700;
+            font-size: 0.82rem;
+        }
+
+        .is-active { color: var(--warning); }
+        .is-complete { color: var(--success); }
+
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            background: var(--surface);
+            border: 1px dashed rgba(19, 34, 56, 0.14);
+            border-radius: 28px;
+            color: var(--muted);
+        }
+
+        @media (max-width: 980px) {
+            .metrics {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .metrics {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container" th:if="${not #lists.isEmpty(bookings)}">
-        <div class="profile-header">
-            <div class="profile-picture" th:text="${#strings.substring(bookings[0].driver.name, 0, 1).toUpperCase()}"></div>
-            <h1 th:text="${bookings[0].driver.name}">Driver Name</h1>
-        </div>
-        
-        <h2>Driver Details</h2>
-        <p><strong>ID:</strong> <span th:text="${bookings[0].driver.id}"></span></p>
-        <p><strong>License:</strong> <span th:text="${bookings[0].driver.licenseNumber}"></span></p>
-        <p><strong>Vehicle Type:</strong> <span th:text="${bookings[0].driver.vehicleType}"></span></p>
-        <p><strong>Vehicle Number:</strong> <span th:text="${bookings[0].driver.vehicleNumber}"></span></p>
-        
-        <h2>Performance</h2>
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-value" th:text="${bookings[0].driver.rating}">Rating</div>
-                <div>Rating</div>
+    <div class="layout" th:if="${driver != null}">
+        <a class="back-link" href="/logistics/drivers/portal">Back to driver portal</a>
+
+        <div th:if="${successMessage}" class="flash flash-success" th:text="${successMessage}">Success</div>
+        <div th:if="${errorMessage}" class="flash flash-error" th:text="${errorMessage}">Error</div>
+
+        <section class="hero">
+            <div class="profile">
+                <div class="avatar" th:text="${#strings.substring(driver.name, 0, 1).toUpperCase()}">D</div>
+                <div>
+                    <h1 th:text="${driver.name}">Driver Name</h1>
+                    <p th:text="${driver.vehicleType + ' · ' + driver.vehicleNumber}">Vehicle</p>
+                    <p th:text="${'License: ' + driver.licenseNumber}">License</p>
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" th:text="${bookings[0].driver.available ? 'Available' : 'Unavailable'}">Availability</div>
-                <div>Status</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" th:text="${#lists.size(bookings)}">Total Bookings</div>
-                <div>Bookings</div>
-            </div>
-        </div>
-        
-        <h2>Current Bookings</h2>
-        <table>
-            <tr>
-                <th>Booking ID</th>
-                <th>Pickup</th>
-                <th>Dropoff</th>
-                <th>Estimated Cost</th>
-                <th>Status</th>
-                <th>Created At</th>
-            </tr>
-            <tr th:each="booking : ${bookings}" th:if="${booking.status == 'PENDING'}">
-                <td th:text="${booking.id}"></td>
-                <td th:text="${booking.pickuplat + ', ' + booking.pickuplon}"></td>
-                <td th:text="${booking.dropoffLat + ', ' + booking.dropoffLon}"></td>
-                <td th:text="${#numbers.formatDecimal(booking.estimatedCost, 1, 2)}"></td>
-                <td th:text="${booking.status}"></td>
-                <td th:text="${#temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-            </tr>
-        </table>
-        
-        <h2>Past Bookings</h2>
-        <table>
-            <tr>
-                <th>Booking ID</th>
-                <th>Pickup</th>
-                <th>Dropoff</th>
-                <th>Estimated Cost</th>
-                <th>Status</th>
-                <th>Created At</th>
-            </tr>
-            <tr th:each="booking : ${bookings}" th:if="${booking.status != 'PENDING'}">
-                <td th:text="${booking.id}"></td>
-                <td th:text="${booking.pickuplat + ', ' + booking.pickuplon}"></td>
-                <td th:text="${booking.dropoffLat + ', ' + booking.dropoffLon}"></td>
-                <td th:text="${#numbers.formatDecimal(booking.estimatedCost, 1, 2)}"></td>
-                <td th:text="${booking.status}"></td>
-                <td th:text="${#temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-            </tr>
-        </table>
+
+            <aside class="hero-meta">
+                Current status
+                <strong th:text="${driver.available ? 'Available' : driver.status}">Available</strong>
+                <p class="helper" th:text="${'Location: ' + driver.driverLat + ', ' + driver.driverLon}">Location</p>
+            </aside>
+        </section>
+
+        <section class="metrics">
+            <article class="metric-card">
+                <span>Driver rating</span>
+                <strong th:text="${driver.rating + '/5'}">0/5</strong>
+                <small class="helper">Latest quality score.</small>
+            </article>
+            <article class="metric-card">
+                <span>Open bookings</span>
+                <strong th:text="${activeBookings}">0</strong>
+                <small class="helper">Pending or under-process jobs.</small>
+            </article>
+            <article class="metric-card">
+                <span>Completed bookings</span>
+                <strong th:text="${completedBookings}">0</strong>
+                <small class="helper">Delivered orders handled by this driver.</small>
+            </article>
+            <article class="metric-card">
+                <span>Total assigned value</span>
+                <strong th:text="${'Rs ' + #numbers.formatDecimal(totalEarnings, 1, 2)}">Rs 0.00</strong>
+                <small class="helper">Aggregate booking value in this view.</small>
+            </article>
+        </section>
+
+        <section class="panel">
+            <h2>Booking timeline</h2>
+            <p class="helper">Each active booking now has its own code request and completion action in the same row.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Booking</th>
+                        <th>Status</th>
+                        <th>Pickup</th>
+                        <th>Drop</th>
+                        <th>Created at</th>
+                        <th>Estimated value</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="booking : ${bookings}">
+                        <td th:text="${'#' + booking.id}">#1</td>
+                        <td>
+                            <span class="status-chip"
+                                  th:classappend="${booking.status.name() == 'DELIVERED' ? ' is-complete' : ' is-active'}"
+                                  th:text="${booking.status.displayName}">
+                                Status
+                            </span>
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(booking.pickuplat, 1, 3) + ', ' + #numbers.formatDecimal(booking.pickuplon, 1, 3)}">Pickup</td>
+                        <td th:text="${#numbers.formatDecimal(booking.dropoffLat, 1, 3) + ', ' + #numbers.formatDecimal(booking.dropoffLon, 1, 3)}">Drop</td>
+                        <td th:text="${#temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}">Time</td>
+                        <td th:text="${'Rs ' + #numbers.formatDecimal(booking.estimatedCost, 1, 2)}">Rs 0.00</td>
+                        <td class="action-stack">
+                            <div th:if="${booking.status.name() == 'PENDING' or booking.status.name() == 'UNDER_PROCESS'}">
+                                <form class="inline-form" th:action="@{'/logistics/drivers/' + ${driver.id} + '/bookings/' + ${booking.id} + '/send-completion-code'}" method="post">
+                                    <button type="submit" class="action-btn send-btn">Request Code</button>
+                                </form>
+                                <form class="inline-form" th:action="@{'/logistics/drivers/' + ${driver.id} + '/bookings/' + ${booking.id} + '/complete'}" method="post">
+                                    <input type="text" name="verificationCode" maxlength="6" placeholder="Enter verification code" required>
+                                    <button type="submit" class="action-btn complete-btn">Complete Booking</button>
+                                </form>
+                                <small class="action-note"
+                                       th:if="${booking.deliveryVerificationSentAt != null}"
+                                       th:text="${'Code sent: ' + #temporals.format(booking.deliveryVerificationSentAt, 'yyyy-MM-dd HH:mm') + ' | Expires: ' + #temporals.format(booking.deliveryVerificationExpiresAt, 'yyyy-MM-dd HH:mm')}">
+                                    Code status
+                                </small>
+                                <small class="action-note" th:if="${booking.deliveryVerificationSentAt == null}">
+                                    Send the code first. Without the verification code, this booking cannot be completed.
+                                </small>
+                            </div>
+                            <div th:if="${booking.status.name() == 'DELIVERED'}">
+                                <span class="action-note">Completed and closed.</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
     </div>
-    <div th:if="${#lists.isEmpty(bookings)}">
-        <h2>No bookings found for this driver.</h2>
+
+    <div class="layout" th:if="${driver == null}">
+        <div class="empty-state">
+            <h2>Driver not found</h2>
+            <p>The requested driver does not exist or has no linked profile in the current dataset.</p>
+        </div>
     </div>
 </body>
 </html>

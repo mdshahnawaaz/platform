@@ -259,7 +259,8 @@
         }
 
         function trackDriver() {
-            fetch(`/driver-map/11`, {
+            const driverId = /*[[${driverId}]]*/ 0;
+            fetch(`/driver-map/${driverId}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'text/html',

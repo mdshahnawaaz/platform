@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Operations Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #102a43;
+            --muted: #5d7085;
+            --bg: #f4f8fb;
+            --surface: #ffffff;
+            --line: rgba(16, 42, 67, 0.08);
+            --teal: #0f766e;
+            --sky: #2563eb;
+            --amber: #d97706;
+            --success: #138a5b;
+            --shadow: 0 18px 44px rgba(16, 42, 67, 0.10);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Manrope', sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 22%),
+                linear-gradient(180deg, #f8fbff, var(--bg));
+        }
+
+        .layout {
+            max-width: 1380px;
+            margin: 0 auto;
+            padding: 26px 20px 40px;
+        }
+
+        .topbar,
+        .hero,
+        .metric-card,
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 18px 22px;
+            margin-bottom: 20px;
+        }
+
+        .brand {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .brand-mark {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--teal), #22b8a9);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+        }
+
+        h1, h2, h3 {
+            margin: 0;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .topbar p,
+        .helper,
+        td,
+        .hero p {
+            color: var(--muted);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #f7fafc;
+            color: var(--ink);
+            text-decoration: none;
+        }
+
+        .hero {
+            padding: 28px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            gap: 22px;
+            flex-wrap: wrap;
+        }
+
+        .hero h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            max-width: 13ch;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            max-width: 54ch;
+            line-height: 1.7;
+        }
+
+        .hero-note {
+            min-width: 260px;
+            padding: 20px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.95), rgba(37, 99, 235, 0.92));
+            color: white;
+        }
+
+        .hero-note p {
+            color: rgba(255,255,255,0.78);
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            padding: 22px;
+        }
+
+        .metric-card strong {
+            display: block;
+            font-size: 2rem;
+            margin: 12px 0 8px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+        }
+
+        .panel {
+            padding: 24px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(16, 42, 67, 0.08);
+        }
+
+        th {
+            font-size: 0.83rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status {
+            display: inline-flex;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            background: #f3f7fb;
+        }
+
+        .available { color: var(--success); }
+        .busy { color: var(--amber); }
+        .link-btn {
+            color: var(--sky);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        @media (max-width: 1080px) {
+            .metrics,
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark">DP</div>
+                <div>
+                    <h1>Driver Operations Portal</h1>
+                    <p>Focused fleet execution workspace separate from user and admin journeys.</p>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="/">Portal Gateway</a>
+                <a href="/portal/user">User Interface</a>
+                <a href="/portal/admin">Admin Interface</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <div>
+                <h2>Monitor fleet readiness and active assignments.</h2>
+                <p>
+                    This interface is tailored to driver-side operations. It gives a clean view of current assignments, available capacity,
+                    and quick navigation into each driver’s workload page.
+                </p>
+            </div>
+            <aside class="hero-note">
+                <h3>Shift snapshot</h3>
+                <strong th:text="${activeJobs}">0</strong>
+                <p>active jobs in dispatch flow right now.</p>
+            </aside>
+        </section>
+
+        <section class="metrics">
+            <article class="metric-card">
+                <span>Total drivers</span>
+                <strong th:text="${#lists.size(drivers)}">0</strong>
+                <small class="helper">Fleet members in the system.</small>
+            </article>
+            <article class="metric-card">
+                <span>Available now</span>
+                <strong th:text="${availableDrivers}">0</strong>
+                <small class="helper">Ready for allocation.</small>
+            </article>
+            <article class="metric-card">
+                <span>Engaged now</span>
+                <strong th:text="${engagedDrivers}">0</strong>
+                <small class="helper">Currently on assignment.</small>
+            </article>
+            <article class="metric-card">
+                <span>Delivered today</span>
+                <strong th:text="${deliveredToday}">0</strong>
+                <small class="helper">Completed jobs for the current day.</small>
+            </article>
+        </section>
+
+        <section class="content-grid">
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>Live assignment board</h3>
+                        <p class="helper">Bookings that still require active operational attention.</p>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking</th>
+                            <th>Customer</th>
+                            <th>Driver</th>
+                            <th>Status</th>
+                            <th>Route</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="assignment : ${liveAssignments}">
+                            <td th:text="${'#' + assignment.id}">#1</td>
+                            <td th:text="${assignment.user.username}">Customer</td>
+                            <td th:text="${assignment.driver.name}">Driver</td>
+                            <td th:text="${assignment.status.displayName}">Status</td>
+                            <td th:text="${#numbers.formatDecimal(assignment.pickuplat, 1, 3) + ', ' + #numbers.formatDecimal(assignment.pickuplon, 1, 3) + ' -> ' + #numbers.formatDecimal(assignment.dropoffLat, 1, 3) + ', ' + #numbers.formatDecimal(assignment.dropoffLon, 1, 3)}">Route</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(liveAssignments)}">
+                            <td colspan="5">No live assignments at the moment.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>Driver roster</h3>
+                        <p class="helper">Quick access into each driver’s detailed booking view.</p>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Driver</th>
+                            <th>Vehicle</th>
+                            <th>Status</th>
+                            <th>Rating</th>
+                            <th>Open</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="driver : ${drivers}">
+                            <td th:text="${driver.name}">Driver</td>
+                            <td th:text="${driver.vehicleType + ' · ' + driver.vehicleNumber}">Vehicle</td>
+                            <td>
+                                <span class="status" th:classappend="${driver.available ? ' available' : ' busy'}"
+                                      th:text="${driver.available ? 'Available' : driver.status}">
+                                    Status
+                                </span>
+                            </td>
+                            <td th:text="${driver.rating + '/5'}">0/5</td>
+                            <td><a class="link-btn" th:href="@{'/logistics/drivers/' + ${driver.id} + '/allbooking'}">Open</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </section>
+    </div>
+</body>
+</html>

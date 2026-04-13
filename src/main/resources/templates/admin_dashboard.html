@@ -1,194 +1,522 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control Tower</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-chartjs-3d"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .header-logo img {
-            width: 150px;
-            height: auto;
+        :root {
+            --ink: #112031;
+            --muted: #61758a;
+            --bg: #eef3f8;
+            --surface: #ffffff;
+            --line: rgba(17, 32, 49, 0.08);
+            --accent: #0f4c81;
+            --accent-soft: #dbeafe;
+            --success: #138a5b;
+            --warning: #d97706;
+            --danger: #c2410c;
+            --shadow: 0 18px 44px rgba(17, 32, 49, 0.10);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Manrope', sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(15, 76, 129, 0.10), transparent 24%),
+                linear-gradient(180deg, #f7fafc, var(--bg));
+            color: var(--ink);
+        }
+
+        .layout {
+            max-width: 1380px;
+            margin: 0 auto;
+            padding: 26px 20px 40px;
+        }
+
+        .topbar,
+        .hero,
+        .metric-card,
+        .panel,
+        .list-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 18px 22px;
+            margin-bottom: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent), #1d7fc1);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+        }
+
+        h1, h2, h3, h4 {
+            margin: 0;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .brand-copy p,
+        .top-links a,
+        .hero p,
+        .metric-card span,
+        .helper,
+        table {
+            color: var(--muted);
+        }
+
+        .brand-copy p {
+            margin: 4px 0 0;
+            font-size: 0.93rem;
+        }
+
+        .top-links {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .top-links a {
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #f7fafc;
+        }
+
+        .hero {
+            padding: 30px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .hero h2 {
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            line-height: 1.05;
+            max-width: 12ch;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            max-width: 58ch;
+            line-height: 1.7;
+        }
+
+        .hero-aside {
+            min-width: 250px;
+            background: linear-gradient(135deg, #f8fbff, #eef6ff);
+            border: 1px solid rgba(15, 76, 129, 0.12);
+            border-radius: 22px;
+            padding: 20px;
+        }
+
+        .hero-aside strong {
+            display: block;
+            font-size: 1.8rem;
+            margin-top: 10px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            padding: 22px;
+        }
+
+        .metric-card strong {
+            display: block;
+            font-size: 2rem;
+            margin: 10px 0 8px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel,
+        .list-card {
+            padding: 24px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .badge {
+            display: inline-flex;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .chart-wrap {
+            height: 320px;
+        }
+
+        .stack {
+            display: grid;
+            gap: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.94rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(17, 32, 49, 0.08);
+        }
+
+        th {
+            color: var(--ink);
+            font-size: 0.83rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            background: #f5f7fb;
+            color: var(--ink);
+        }
+
+        .status-completed { color: var(--success); }
+        .status-pending { color: var(--warning); }
+        .status-active { color: var(--accent); }
+
+        .table-link {
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        @media (max-width: 1080px) {
+            .metrics,
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .panel,
+            .list-card,
+            .hero {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container my-5">
-        <!-- Header Section with Logo -->
-        <div class="d-flex align-items-center mb-4">
-            <div class="header-logo me-3">
-                <img src="" th:src="@{/images/abc.webp}"alt="Intelligent Logistics Hub Logo">
-            </div>
-            <h1 class="flex-grow-1 text-center">Admin Dashboard</h1>
-        </div>
-
-        <!-- Navigation Buttons -->
-        <div class="d-flex justify-content-between mb-4">
-            <a href="/manage-trips" class="btn btn-primary">Manage Trips</a>
-            <a href="/manage-drivers" class="btn btn-secondary">Manage Drivers</a>
-            <a href="/booking-requests" class="btn btn-success">Booking Requests</a>
-            <a href="/revenue-insights" class="btn btn-warning">Revenue Insights</a>
-            <a href="/settings" class="btn btn-danger">Settings</a>
-        </div>
-
-        <!-- Dashboard Metrics -->
-        <div class="row text-center mb-4">
-            <div class="col-md-3">
-                <div class="card bg-primary text-white shadow-lg">
-                    <div class="card-body">
-                        <h3 th:text="${completedTrips}">0</h3>
-                        <p>Completed Trips</p>
-                    </div>
+    <div class="layout">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-badge">CT</div>
+                <div class="brand-copy">
+                    <h1>Admin Control Tower</h1>
+                    <p>Separate operational workspace powered by booking, driver, and user data.</p>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-warning text-dark shadow-lg">
-                    <div class="card-body">
-                        <h3 th:text="${pendingBookings}">0</h3>
-                        <p>Pending Bookings</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card bg-success text-white shadow-lg">
-                    <div class="card-body">
-                        <h3 th:text="${freeDrivers}">0</h3>
-                        <p>Free Drivers</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card bg-danger text-white shadow-lg">
-                    <div class="card-body">
-                        <h3 th:text="${bookedDrivers}">0</h3>
-                        <p>Booked Drivers</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <nav class="top-links">
+                <a href="/">Portal Gateway</a>
+                <a href="/portal/user">User Interface</a>
+                <a href="/portal/driver">Driver Interface</a>
+                <a href="/logistics/admin/bookings">Fleet Records</a>
+            </nav>
+        </header>
 
-        <!-- Charts -->
-        <div class="row mb-5">
-            <!-- Driver Ratings Pie Chart -->
-            <div class="col-md-6">
-                <h4 class="text-center">Driver Ratings Distribution (3D)</h4>
-                <canvas id="driverRatingsChart"></canvas>
+        <section class="hero">
+            <div>
+                <span class="badge">Admin Only</span>
+                <h2>Run operations without mixing into the customer app.</h2>
+                <p>
+                    This dashboard now pulls live aggregates from the backend instead of mock values, so leadership gets a real view of bookings,
+                    dispatch load, revenue movement, and top-performing drivers.
+                </p>
             </div>
-            <!-- Trip Status Donut Chart -->
-            <div class="col-md-6">
-                <h4 class="text-center">Trip Status Distribution (3D)</h4>
-                <canvas id="tripStatusChart"></canvas>
-            </div>
-        </div>
+            <aside class="hero-aside">
+                Revenue last 7 days
+                <strong th:text="${'Rs ' + #numbers.formatDecimal(dashboard.revenueLast7Days, 1, 2)}">Rs 0.00</strong>
+                <p class="helper">Average order value: <span th:text="${'Rs ' + #numbers.formatDecimal(dashboard.averageOrderValue, 1, 2)}">Rs 0.00</span></p>
+            </aside>
+        </section>
 
-        <!-- Revenue Bar Chart -->
-        <div class="row mb-5">
-            <div class="col-md-12">
-                <h4 class="text-center">Weekly Revenue Insights</h4>
-                <canvas id="revenueBarChart"></canvas>
-            </div>
-        </div>
+        <section class="metrics">
+            <article class="metric-card">
+                <span>Total bookings</span>
+                <strong th:text="${dashboard.totalBookings}">0</strong>
+                <small class="helper">All orders in the platform.</small>
+            </article>
+            <article class="metric-card">
+                <span>Completed trips</span>
+                <strong th:text="${dashboard.completedTrips}">0</strong>
+                <small class="helper">Successfully delivered orders.</small>
+            </article>
+            <article class="metric-card">
+                <span>Available drivers</span>
+                <strong th:text="${dashboard.availableDrivers}">0</strong>
+                <small class="helper">Current fleet capacity.</small>
+            </article>
+            <article class="metric-card">
+                <span>Fulfillment rate</span>
+                <strong th:text="${dashboard.fulfillmentRate + '%'}">0%</strong>
+                <small class="helper">Completed trips as a share of total orders.</small>
+            </article>
+        </section>
 
-        <!-- Pending Bookings Table -->
-        <div class="row">
-            <div class="col-md-12">
-                <h4>Pending Bookings</h4>
-                <table class="table table-hover shadow-lg">
-                    <thead class="table-dark">
+        <section class="content-grid">
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>Weekly booking trend</h3>
+                        <p class="helper">Live aggregation over the latest seven days.</p>
+                    </div>
+                    <span class="badge">Backend Derived</span>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="weeklyTrendChart"></canvas>
+                </div>
+            </section>
+
+            <div class="stack">
+                <section class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h3>Status mix</h3>
+                            <p class="helper">Booking state distribution.</p>
+                        </div>
+                    </div>
+                    <div class="chart-wrap" style="height: 250px;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h3>Capacity summary</h3>
+                            <p class="helper">Fast view of operational balance.</p>
+                        </div>
+                    </div>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Pending bookings</td>
+                                <td th:text="${dashboard.pendingBookings}">0</td>
+                            </tr>
+                            <tr>
+                                <td>Trips in progress</td>
+                                <td th:text="${dashboard.activeTrips}">0</td>
+                            </tr>
+                            <tr>
+                                <td>Busy drivers</td>
+                                <td th:text="${dashboard.busyDrivers}">0</td>
+                            </tr>
+                            <tr>
+                                <td>Total users</td>
+                                <td th:text="${dashboard.totalUsers}">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+        </section>
+
+        <section class="content-grid">
+            <section class="list-card">
+                <div class="panel-header">
+                    <div>
+                        <h3>Recent bookings</h3>
+                        <p class="helper">Latest orders flowing through the platform.</p>
+                    </div>
+                    <a href="/logistics/admin/bookings" class="table-link">View all records</a>
+                </div>
+                <table>
+                    <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Customer Name</th>
-                            <th>Pickup Location</th>
-                            <th>Destination</th>
-                            <th>Booking Time</th>
+                            <th>Booking</th>
+                            <th>Customer</th>
+                            <th>Status</th>
+                            <th>Driver</th>
+                            <th>Value</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Mock row, replace with dynamic data -->
-                        <tr>
-                            <td>1</td>
-                            <td>John Doe</td>
-                            <td>Main Street</td>
-                            <td>Market Road</td>
-                            <td>10:00 AM</td>
+                        <tr th:each="booking : ${dashboard.recentBookings}">
+                            <td>
+                                <a class="table-link" th:href="@{'/logistics/admin/bookings/' + ${booking.id}}" th:text="${'#' + booking.id}">#1</a>
+                            </td>
+                            <td th:text="${booking.user.username}">Customer</td>
+                            <td>
+                                <span class="status-chip"
+                                      th:classappend="${booking.status.name() == 'DELIVERED' ? ' status-completed' : (booking.status.name() == 'UNDER_PROCESS' ? ' status-active' : ' status-pending')}"
+                                      th:text="${booking.status.displayName}">
+                                    Status
+                                </span>
+                            </td>
+                            <td th:text="${booking.driver != null ? booking.driver.name : 'Awaiting allocation'}">Driver</td>
+                            <td th:text="${'Rs ' + #numbers.formatDecimal(booking.estimatedCost, 1, 2)}">Rs 0.00</td>
                         </tr>
-                        <!-- Add dynamic rows -->
                     </tbody>
                 </table>
-            </div>
-        </div>
+            </section>
+
+            <section class="list-card">
+                <div class="panel-header">
+                    <div>
+                        <h3>Top driver performance</h3>
+                        <p class="helper">Ranked by completed deliveries.</p>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Driver</th>
+                            <th>Vehicle</th>
+                            <th>Status</th>
+                            <th>Trips</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="driver : ${dashboard.topDrivers}">
+                            <td>
+                                <a class="table-link" th:href="@{'/logistics/admin/drivers/' + ${driver.id}}" th:text="${driver.name}">Driver</a>
+                            </td>
+                            <td th:text="${driver.vehicleType}">Vehicle</td>
+                            <td th:text="${driver.status}">Status</td>
+                            <td th:text="${driver.completedTrips}">0</td>
+                            <td th:text="${driver.rating + '/5'}">0/5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </section>
     </div>
 
     <script th:inline="javascript">
-        // Driver Ratings Chart (3D Pie)
+        const weeklyLabels = /*[[${dashboard.weeklyLabels}]]*/ [];
+        const weeklyBookings = /*[[${dashboard.weeklyBookingCounts}]]*/ [];
+        const weeklyRevenue = /*[[${dashboard.weeklyRevenue}]]*/ [];
+        const statusBreakdown = /*[[${dashboard.bookingStatusBreakdown}]]*/ {};
 
-        const driverRatingsData = /*[[${driverRatings}]]*/ {};
-        const ctx1 = document.getElementById('driverRatingsChart').getContext('2d');
-        new Chart(ctx1, {
-            type: 'pie',
+        new Chart(document.getElementById('weeklyTrendChart'), {
+            type: 'line',
             data: {
-                labels: Object.keys(driverRatingsData),
-                datasets: [{
-                    data: Object.values(driverRatingsData),
-                    backgroundColor: ['#4CAF50', '#FFC107', '#2196F3', '#FF5722'],
-                }]
+                labels: weeklyLabels,
+                datasets: [
+                    {
+                        label: 'Bookings',
+                        data: weeklyBookings,
+                        borderColor: '#0f4c81',
+                        backgroundColor: 'rgba(15, 76, 129, 0.12)',
+                        fill: true,
+                        tension: 0.35,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Revenue',
+                        data: weeklyRevenue,
+                        borderColor: '#d97706',
+                        backgroundColor: 'rgba(217, 119, 6, 0.12)',
+                        tension: 0.35,
+                        yAxisID: 'y1'
+                    }
+                ]
             },
             options: {
-                plugins: {
-                    chartjs3d: {
-                        enabled: true,
-                        perspective: 60,
-                        depth: 20,
-                        lighting: true
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        position: 'right',
+                        grid: {
+                            drawOnChartArea: false
+                        }
                     }
                 }
             }
         });
 
-        // Trip Status Chart (3D Donut)
-        const tripStatusData = /*[[${tripStatus}]]*/ {};
-        const ctx2 = document.getElementById('tripStatusChart').getContext('2d');
-        new Chart(ctx2, {
+        new Chart(document.getElementById('statusChart'), {
             type: 'doughnut',
             data: {
-                labels: Object.keys(tripStatusData),
+                labels: Object.keys(statusBreakdown),
                 datasets: [{
-                    data: Object.values(tripStatusData),
-                    backgroundColor: ['#4CAF50', '#FFC107', '#FF5722'],
+                    data: Object.values(statusBreakdown),
+                    backgroundColor: ['#0f4c81', '#d97706', '#138a5b', '#c2410c']
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
-                    chartjs3d: {
-                        enabled: true,
-                        perspective: 60,
-                        depth: 20,
-                        lighting: true
-                    }
-                }
-            }
-        });
-
-        // Weekly Revenue Chart (3D Bar)
-        const revenueData = /*[[${revenueData}]]*/ {};
-        const ctx3 = document.getElementById('revenueBarChart').getContext('2d');
-        new Chart(ctx3, {
-            type: 'bar',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Revenue ($)',
-                    data: revenueData,
-                    backgroundColor: ['#2196F3', '#FFC107', '#4CAF50', '#FF5722', '#9C27B0', '#00BCD4', '#E91E63']
-                }]
-            },
-            options: {
-                plugins: {
-                    chartjs3d: {
-                        enabled: true,
-                        perspective: 60,
-                        depth: 20,
-                        lighting: true
+                    legend: {
+                        position: 'bottom'
                     }
                 }
             }

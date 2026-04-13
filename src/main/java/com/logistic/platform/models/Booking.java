@@ -55,6 +55,15 @@ public class Booking {
     @Column(name = "vehicle_type")
     private String vehicleType;
 
+    @Column(name = "delivery_verification_code_hash")
+    private String deliveryVerificationCodeHash;
+
+    @Column(name = "delivery_verification_expires_at")
+    private LocalDateTime deliveryVerificationExpiresAt;
+
+    @Column(name = "delivery_verification_sent_at")
+    private LocalDateTime deliveryVerificationSentAt;
+
     public Booking() {
     }
 
@@ -171,6 +180,30 @@ public class Booking {
         this.vehicleType = vehicleType;
     }
 
+    public String getDeliveryVerificationCodeHash() {
+        return deliveryVerificationCodeHash;
+    }
+
+    public void setDeliveryVerificationCodeHash(String deliveryVerificationCodeHash) {
+        this.deliveryVerificationCodeHash = deliveryVerificationCodeHash;
+    }
+
+    public LocalDateTime getDeliveryVerificationExpiresAt() {
+        return deliveryVerificationExpiresAt;
+    }
+
+    public void setDeliveryVerificationExpiresAt(LocalDateTime deliveryVerificationExpiresAt) {
+        this.deliveryVerificationExpiresAt = deliveryVerificationExpiresAt;
+    }
+
+    public LocalDateTime getDeliveryVerificationSentAt() {
+        return deliveryVerificationSentAt;
+    }
+
+    public void setDeliveryVerificationSentAt(LocalDateTime deliveryVerificationSentAt) {
+        this.deliveryVerificationSentAt = deliveryVerificationSentAt;
+    }
+
     @Override
     public String toString() {
         return "Booking{" +
@@ -186,6 +219,7 @@ public class Booking {
                 ", createdAt=" + createdAt +
                 ", deliverAt=" + deliverAt +
                 ", vehicleType='" + vehicleType + '\'' +
+                ", deliveryVerificationExpiresAt=" + deliveryVerificationExpiresAt +
                 '}';
     }
 }
