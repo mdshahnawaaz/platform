@@ -392,39 +392,34 @@
 
     <script>
         function callEndpoint(endpoint) {
-    console.log(`Calling endpoint: ${endpoint}`);
-    
-    fetch(endpoint, {
-        method: 'GET',
-        headers: {
-            'Accept': 'text/html',
-        },
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+            console.log(`Calling endpoint: ${endpoint}`);
+
+            fetch(endpoint, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'text/html',
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(html => {
+                document.open();
+                document.write(html);
+                document.close();
+            })
+            .catch(error => {
+                console.error('Error fetching HTML:', error);
+            });
         }
-        return response.text(); // We're expecting HTML, so we use text() instead of json()
-    })
-    .then(html => {
-        // Replace the content of the current page with the new HTML
-        document.open();
-        document.write(html);
-        document.close();
-        
-        // Alternatively, if you want to update only a specific part of the page:
-        // document.getElementById('contentContainer').innerHTML = html;
-    })
-    .catch(error => {
-        console.error('Error fetching HTML:', error);
-        // Handle the error appropriately, e.g., show an error message to the user
-    });
-}
 
         function trackShipment() {
             const trackingNumber = document.getElementById('trackingNumber').value;
             callEndpoint(`/logistics/tracking/${trackingNumber}`);
-            return false; // Prevent form submission
+            return false;
         }
     </script>
 </body>

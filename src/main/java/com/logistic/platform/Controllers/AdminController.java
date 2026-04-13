@@ -1,8 +1,6 @@
 package com.logistic.platform.Controllers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.logistic.platform.models.AdminDashboardData;
 import com.logistic.platform.models.Booking;
 import com.logistic.platform.models.Driver;
 import com.logistic.platform.services.AdminService;
@@ -27,29 +26,14 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String getDashboard(Model model) {
-        // Mock data for demonstration
-        model.addAttribute("completedTrips", 120);
-        model.addAttribute("pendingBookings", 15);
-        model.addAttribute("freeDrivers", 10);
-        model.addAttribute("bookedDrivers", 25);
-
-        // Driver ratings data
-        Map<String, Integer> driverRatings = new HashMap<>();
-        driverRatings.put("5 Stars", 50);
-        driverRatings.put("4 Stars", 30);
-        driverRatings.put("3 Stars", 15);
-        driverRatings.put("2 Stars", 5);
-        model.addAttribute("driverRatings", driverRatings);
-
-        // Trip status data
-        Map<String, Integer> tripStatus = new HashMap<>();
-        tripStatus.put("Completed", 120);
-        tripStatus.put("Pending", 15);
-        tripStatus.put("Canceled", 5);
-        model.addAttribute("tripStatus", tripStatus);
-
-        // Weekly revenue data
-        model.addAttribute("revenueData", List.of(500, 600, 450, 700, 800, 650, 900));
+        AdminDashboardData dashboardData = adminService.getDashboardData();
+        model.addAttribute("dashboard", dashboardData);
+        model.addAttribute("completedTrips", dashboardData.completedTrips());
+        model.addAttribute("pendingBookings", dashboardData.pendingBookings());
+        model.addAttribute("freeDrivers", dashboardData.availableDrivers());
+        model.addAttribute("bookedDrivers", dashboardData.busyDrivers());
+        model.addAttribute("tripStatus", dashboardData.bookingStatusBreakdown());
+        model.addAttribute("revenueData", dashboardData.weeklyRevenue());
 
         return "admin_dashboard";
     }

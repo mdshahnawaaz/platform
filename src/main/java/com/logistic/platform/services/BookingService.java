@@ -107,4 +107,8 @@ public class BookingService {
     {
         return bookingRepository.findByDriverId(driverId);
     }
+
+    public List<Booking> getAllBookings() {
+        return bookingRepository.findAll();
+    }
 }
