@@ -2,7 +2,9 @@ package com.logistic.platform.Controllers;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,8 @@ import com.logistic.platform.services.DriverService;
 @RequestMapping("/logistics/drivers")
 public class DriverController {
 
+    private static final String DRIVER_SESSION_KEY = "loggedInDriverId";
+
     // @Autowired
     // private KafkaService kafkaService;
 
@@ -36,24 +40,47 @@ public class DriverController {
     private BookingService bookingService;
 
     @GetMapping("/portal")
-    public String getDriverPortal(Model model) {
-        List<Driver> drivers = driverService.getAllDrivers();
-        List<Booking> liveAssignments = driverService.getLiveAssignments();
-        long availableDrivers = drivers.stream().filter(Driver::isAvailable).count();
-        long engagedDrivers = drivers.size() - availableDrivers;
-        long deliveredToday = bookingService.getAllBookings().stream()
-                .filter(booking -> booking.getStatus() == BookingStatus.DELIVERED)
-                .filter(booking -> booking.getDeliverAt() != null)
-                .filter(booking -> booking.getDeliverAt().toLocalDate().equals(java.time.LocalDate.now()))
-                .count();
+    public String getDriverPortal(
+            @RequestParam(required = false) Integer bookingId,
+            HttpSession session,
+            Model model) {
+        Integer driverId = (Integer) session.getAttribute(DRIVER_SESSION_KEY);
+        if (driverId == null) {
+            return "driver_login";
+        }
 
-        model.addAttribute("drivers", drivers);
-        model.addAttribute("liveAssignments", liveAssignments);
-        model.addAttribute("availableDrivers", availableDrivers);
-        model.addAttribute("engagedDrivers", engagedDrivers);
-        model.addAttribute("deliveredToday", deliveredToday);
-        model.addAttribute("activeJobs", liveAssignments.size());
+        Optional<Driver> driverOpt = driverService.getDriver(driverId);
+        if (driverOpt.isEmpty()) {
+            session.invalidate();
+            model.addAttribute("errorMessage", "Driver session expired. Please log in again.");
+            return "driver_login";
+        }
+
+        populateDriverDashboard(model, driverOpt.get(), bookingId);
         return "driver_portal";
+    }
+
+    @PostMapping("/login")
+    public String loginDriver(
+            @RequestParam int driverId,
+            @RequestParam String licenseNumber,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        return driverService.authenticateDriver(driverId, licenseNumber)
+                .map(driver -> {
+                    session.setAttribute(DRIVER_SESSION_KEY, driver.getId());
+                    return "redirect:/logistics/drivers/portal";
+                })
+                .orElseGet(() -> {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Invalid driver ID or license number.");
+                    return "redirect:/logistics/drivers/portal";
+                });
+    }
+
+    @PostMapping("/logout")
+    public String logoutDriver(HttpSession session) {
+        session.invalidate();
+        return "redirect:/logistics/drivers/portal";
     }
 
     @GetMapping("/{id}")
@@ -115,29 +142,60 @@ public class DriverController {
 
     @GetMapping("/{id}/allbooking")
     public String getMethodName(@PathVariable int id,Model model) {
-        List<Booking>booking= bookingService.getDriverDetails(id);
         Driver driver = driverService.getDriver(id).orElse(null);
-        List<Booking> activeBookingList = booking.stream()
+        if (driver == null) {
+            model.addAttribute("driver", null);
+            return "driver_view";
+        }
+        populateDriverDashboard(model, driver, null);
+        return "driver_view";
+    }
+
+    private void populateDriverDashboard(Model model, Driver driver, Integer selectedBookingId) {
+        List<Booking> bookings = bookingService.getDriverDetails(driver.getId());
+        List<Booking> activeBookingList = bookings.stream()
                 .filter(item -> item.getStatus() == BookingStatus.PENDING || item.getStatus() == BookingStatus.UNDER_PROCESS)
                 .toList();
-        long activeBookings = booking.stream()
-                .filter(item -> item.getStatus() == BookingStatus.PENDING || item.getStatus() == BookingStatus.UNDER_PROCESS)
-                .count();
-        long completedBookings = booking.stream()
+        List<Booking> bookingHistory = bookings.stream()
                 .filter(item -> item.getStatus() == BookingStatus.DELIVERED)
-                .count();
-        BigDecimal totalEarnings = booking.stream()
+                .sorted((left, right) -> right.getCreatedAt().compareTo(left.getCreatedAt()))
+                .toList();
+
+        Booking selectedBooking = resolveSelectedBooking(activeBookingList, selectedBookingId);
+
+        long activeBookings = activeBookingList.size();
+        long completedBookings = bookingHistory.size();
+        BigDecimal totalEarnings = bookings.stream()
                 .filter(item -> item.getEstimatedCost() != null)
                 .map(Booking::getEstimatedCost)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        model.addAttribute("bookings",booking);
-        model.addAttribute("activeBookingList", activeBookingList);
         model.addAttribute("driver", driver);
+        model.addAttribute("bookings", bookings);
+        model.addAttribute("activeBookingList", activeBookingList);
+        model.addAttribute("bookingHistory", bookingHistory);
+        model.addAttribute("selectedBooking", selectedBooking);
         model.addAttribute("activeBookings", activeBookings);
         model.addAttribute("completedBookings", completedBookings);
         model.addAttribute("totalEarnings", totalEarnings);
-        return "driver_view";
+        model.addAttribute("driverId", driver.getId());
+        model.addAttribute("initialDriverLat", driver.getDriverLat());
+        model.addAttribute("initialDriverLon", driver.getDriverLon());
+        model.addAttribute("selectedBookingDestinationLat", selectedBooking != null ? selectedBooking.getDropoffLat() : null);
+        model.addAttribute("selectedBookingDestinationLon", selectedBooking != null ? selectedBooking.getDropoffLon() : null);
+    }
+
+    private Booking resolveSelectedBooking(List<Booking> activeBookings, Integer selectedBookingId) {
+        if (activeBookings.isEmpty()) {
+            return null;
+        }
+        if (selectedBookingId == null) {
+            return activeBookings.get(0);
+        }
+        return activeBookings.stream()
+                .filter(booking -> booking.getId() == selectedBookingId)
+                .findFirst()
+                .orElse(activeBookings.get(0));
     }
     
     // @PostMapping("/update")

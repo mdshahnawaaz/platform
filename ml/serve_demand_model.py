@@ -35,6 +35,11 @@ class DemandModelInput(BaseModel):
     averageTripDistanceLastHour: float
 
 
+@app.get("/health")
+def health():
+    return {"ok": True, "modelPath": str(MODEL_PATH), "modelLoaded": True}
+
+
 @app.post("/predict")
 def predict(payload: DemandModelInput):
     frame = pd.DataFrame([

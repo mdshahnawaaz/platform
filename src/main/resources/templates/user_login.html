@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --background-color: #0f0f1f;
+            --text-color: #ecf0f1;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Roboto', sans-serif;
+        }
+        .card {
+            width: min(520px, 100%);
+            padding: 32px;
+            border-radius: 24px;
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        }
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            margin: 0 0 10px;
+            color: var(--primary-color);
+        }
+        p { color: rgba(236,240,241,0.82); line-height: 1.7; }
+        label { display:block; margin: 14px 0 8px; font-weight: 700; }
+        input {
+            width:100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(255,255,255,0.12);
+            color: var(--text-color);
+        }
+        button {
+            width:100%;
+            margin-top: 18px;
+            padding: 14px;
+            border:none;
+            border-radius: 14px;
+            background: var(--accent-color);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .flash {
+            margin-top: 18px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(231, 76, 60, 0.15);
+            color: #ff9b90;
+        }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <h1>LogiSwift User Login</h1>
+        <p>Log in with your user ID and email to access booking history, account activity, and the booking workflow.</p>
+        <div th:if="${errorMessage}" class="flash" th:text="${errorMessage}">Invalid login.</div>
+        <form th:action="@{/portal/user/login}" method="post">
+            <label for="userId">User ID</label>
+            <input id="userId" name="userId" type="number" min="1" required>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required>
+            <button type="submit">Login to User Interface</button>
+        </form>
+    </main>
+</body>
+</html>

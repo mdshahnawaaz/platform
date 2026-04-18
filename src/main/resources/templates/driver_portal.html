@@ -3,134 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Driver Operations Portal</title>
+    <title>LogiSwift Driver Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <style>
         :root {
-            --ink: #102a43;
-            --muted: #5d7085;
-            --bg: #f4f8fb;
-            --surface: #ffffff;
-            --line: rgba(16, 42, 67, 0.08);
-            --teal: #0f766e;
-            --sky: #2563eb;
-            --amber: #d97706;
-            --success: #138a5b;
-            --shadow: 0 18px 44px rgba(16, 42, 67, 0.10);
+            --ink: #122033;
+            --muted: #708095;
+            --panel: rgba(255, 255, 255, 0.9);
+            --panel-strong: #ffffff;
+            --line: rgba(18, 32, 51, 0.08);
+            --primary: #0e8c7d;
+            --primary-deep: #0d6f63;
+            --accent: #2264f5;
+            --accent-soft: rgba(34, 100, 245, 0.12);
+            --warning: #d97706;
+            --success: #12875d;
+            --surface: #eef4fb;
+            --sidebar: #0e1a2b;
+            --sidebar-soft: rgba(255, 255, 255, 0.08);
+            --shadow: 0 24px 60px rgba(18, 32, 51, 0.12);
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
             font-family: 'Manrope', sans-serif;
             color: var(--ink);
             background:
-                radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 22%),
-                linear-gradient(180deg, #f8fbff, var(--bg));
+                radial-gradient(circle at top left, rgba(34, 100, 245, 0.12), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(14, 140, 125, 0.12), transparent 24%),
+                linear-gradient(180deg, #f8fbff 0%, var(--surface) 100%);
         }
 
-        .layout {
-            max-width: 1380px;
-            margin: 0 auto;
-            padding: 26px 20px 40px;
-        }
-
-        .topbar,
-        .hero,
-        .metric-card,
-        .panel {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 28px;
-            box-shadow: var(--shadow);
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 18px;
-            padding: 18px 22px;
-            margin-bottom: 20px;
-        }
-
-        .brand {
-            display: flex;
-            gap: 14px;
-            align-items: center;
-        }
-
-        .brand-mark {
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--teal), #22b8a9);
-            color: white;
-            display: grid;
-            place-items: center;
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-        }
-
-        h1, h2, h3 {
+        h1, h2, h3, h4, h5 {
             margin: 0;
             font-family: 'Space Grotesk', sans-serif;
         }
 
-        .topbar p,
-        .helper,
-        td,
-        .hero p {
-            color: var(--muted);
+        p {
+            margin: 0;
         }
 
-        .nav-links {
+        .page {
+            display: grid;
+            grid-template-columns: 300px minmax(0, 1fr);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background:
+                radial-gradient(circle at top left, rgba(34, 100, 245, 0.20), transparent 28%),
+                linear-gradient(180deg, #13243b 0%, var(--sidebar) 100%);
+            color: white;
+            padding: 28px 22px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
             display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .nav-links a {
-            padding: 10px 14px;
-            border-radius: 999px;
-            background: #f7fafc;
-            color: var(--ink);
-            text-decoration: none;
-        }
-
-        .hero {
-            padding: 28px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             gap: 22px;
-            flex-wrap: wrap;
         }
 
-        .hero h2 {
-            font-size: clamp(2rem, 4vw, 3rem);
-            max-width: 13ch;
-            margin-bottom: 12px;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
 
-        .hero p {
-            max-width: 54ch;
-            line-height: 1.7;
+        .brand-mark {
+            width: 54px;
+            height: 54px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary), #4fd0c1);
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 16px 28px rgba(14, 140, 125, 0.24);
         }
 
-        .hero-note {
-            min-width: 260px;
-            padding: 20px;
+        .brand-copy p,
+        .driver-meta p,
+        .sidebar-note p,
+        .sidebar-label {
+            color: rgba(255, 255, 255, 0.72);
+        }
+
+        .brand-copy h1 {
+            font-size: 1.2rem;
+        }
+
+        .brand-copy p {
+            margin-top: 5px;
+            line-height: 1.5;
+            font-size: 0.92rem;
+        }
+
+        .driver-card,
+        .sidebar-note,
+        .nav-card {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 24px;
-            background: linear-gradient(135deg, rgba(15, 118, 110, 0.95), rgba(37, 99, 235, 0.92));
+            padding: 18px;
+            backdrop-filter: blur(12px);
+        }
+
+        .driver-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.12);
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 14px;
+        }
+
+        .driver-meta h2 {
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+        }
+
+        .sidebar-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.82rem;
+            font-weight: 800;
+            margin-top: 10px;
+        }
+
+        .sidebar-nav {
+            display: grid;
+            gap: 10px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 18px;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            background: transparent;
+            border: 1px solid transparent;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background: var(--sidebar-soft);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(2px);
+        }
+
+        .sidebar-link small {
+            color: rgba(255, 255, 255, 0.62);
+            font-weight: 700;
+        }
+
+        .logout-form {
+            margin-top: auto;
+        }
+
+        .logout-form button {
+            width: 100%;
+            border: none;
+            border-radius: 18px;
+            padding: 14px 16px;
+            font: inherit;
+            font-weight: 800;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
             color: white;
         }
 
-        .hero-note p {
-            color: rgba(255,255,255,0.78);
+        .main {
+            padding: 28px;
+        }
+
+        .flash {
+            padding: 15px 18px;
+            border-radius: 18px;
+            margin-bottom: 18px;
+            font-weight: 700;
+        }
+
+        .flash-success {
+            background: rgba(18, 135, 93, 0.12);
+            color: var(--success);
+        }
+
+        .flash-error {
+            background: rgba(217, 119, 6, 0.12);
+            color: var(--warning);
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .hero-panel,
+        .hero-side,
+        .metric-card,
+        .content-panel,
+        .booking-item,
+        .detail-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(14px);
+        }
+
+        .hero-panel {
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-panel::after {
+            content: "";
+            position: absolute;
+            right: -70px;
+            top: -40px;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(34, 100, 245, 0.14), transparent 65%);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(14, 140, 125, 0.12);
+            color: var(--primary-deep);
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+        }
+
+        .hero-panel h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            max-width: 12ch;
+            line-height: 1;
+            margin-bottom: 14px;
+        }
+
+        .hero-panel p {
+            color: var(--muted);
+            line-height: 1.7;
+            max-width: 58ch;
+        }
+
+        .hero-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .hero-pills span {
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #f3f7fd;
+            color: var(--ink);
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .hero-side {
+            padding: 24px;
+            background:
+                linear-gradient(135deg, rgba(14, 140, 125, 0.94), rgba(34, 100, 245, 0.92));
+            color: white;
+        }
+
+        .hero-side p {
+            color: rgba(255, 255, 255, 0.76);
+            line-height: 1.6;
+        }
+
+        .hero-side strong {
+            display: block;
+            font-size: 2rem;
+            margin: 14px 0 10px;
         }
 
         .metrics {
@@ -144,202 +330,642 @@
             padding: 22px;
         }
 
+        .metric-card span {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
         .metric-card strong {
             display: block;
-            font-size: 2rem;
+            font-size: 2.15rem;
             margin: 12px 0 8px;
         }
 
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 20px;
+        .metric-card small {
+            color: var(--muted);
         }
 
-        .panel {
+        .tabs {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .tab-btn {
+            border: none;
+            border-radius: 18px;
+            padding: 12px 16px;
+            font: inherit;
+            font-weight: 800;
+            cursor: pointer;
+            background: #ecf2fb;
+            color: var(--ink);
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 14px 24px rgba(34, 100, 245, 0.2);
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .current-grid {
+            display: grid;
+            grid-template-columns: 0.82fr 1.18fr;
+            gap: 18px;
+        }
+
+        .content-panel {
             padding: 24px;
         }
 
-        .panel-header {
+        .panel-head {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .panel-head p {
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        .booking-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .booking-item {
+            padding: 18px;
+        }
+
+        .booking-item.selected {
+            border-color: rgba(34, 100, 245, 0.26);
+            box-shadow: 0 20px 36px rgba(34, 100, 245, 0.12);
+        }
+
+        .booking-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .booking-item p {
+            color: var(--muted);
+            line-height: 1.6;
+            margin-top: 8px;
+        }
+
+        .select-link {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 14px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            text-decoration: none;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-weight: 800;
+        }
+
+        .status-chip {
+            display: inline-flex;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: #f4f7fb;
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        .status-active {
+            color: var(--warning);
+        }
+
+        .status-complete {
+            color: var(--success);
+        }
+
+        .details-grid,
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 14px;
             margin-bottom: 18px;
+        }
+
+        .detail-card {
+            padding: 18px;
+            background: #f8fbff;
+        }
+
+        .detail-card span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.88rem;
+            margin-bottom: 8px;
+        }
+
+        .detail-card strong {
+            font-size: 1.05rem;
+        }
+
+        .action-strip {
+            display: grid;
+            gap: 12px;
+            padding: 18px;
+            border-radius: 24px;
+            background: linear-gradient(180deg, #f7fbff 0%, #eef5ff 100%);
+            border: 1px solid rgba(34, 100, 245, 0.08);
+        }
+
+        .action-strip form {
+            display: grid;
+            gap: 10px;
+        }
+
+        .action-strip input {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid rgba(18, 32, 51, 0.12);
+            padding: 13px 14px;
+            font: inherit;
+        }
+
+        .action-btn {
+            border: none;
+            border-radius: 16px;
+            padding: 13px 16px;
+            font: inherit;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+        }
+
+        .request-btn {
+            background: linear-gradient(135deg, var(--accent), #5a8cff);
+        }
+
+        .complete-btn {
+            background: linear-gradient(135deg, var(--primary), #20b7a5);
+        }
+
+        .map-shell {
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 26px;
+            background: #f6fbff;
+            border: 1px solid rgba(18, 32, 51, 0.06);
+        }
+
+        #map {
+            width: 100%;
+            height: 420px;
+            border-radius: 20px;
+            overflow: hidden;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 10px;
         }
 
         th,
         td {
             text-align: left;
             padding: 14px 0;
-            border-bottom: 1px solid rgba(16, 42, 67, 0.08);
+            border-bottom: 1px solid rgba(18, 32, 51, 0.08);
+            color: var(--muted);
         }
 
         th {
-            font-size: 0.83rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .status {
-            display: inline-flex;
-            padding: 8px 12px;
-            border-radius: 999px;
+            color: var(--ink);
             font-size: 0.82rem;
-            font-weight: 700;
-            background: #f3f7fb;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
 
-        .available { color: var(--success); }
-        .busy { color: var(--amber); }
-        .link-btn {
-            color: var(--sky);
-            text-decoration: none;
-            font-weight: 700;
+        .empty-state {
+            padding: 34px;
+            border-radius: 24px;
+            background: linear-gradient(180deg, #f9fbff 0%, #f1f6fd 100%);
+            border: 1px dashed rgba(18, 32, 51, 0.12);
         }
 
-        @media (max-width: 1080px) {
-            .metrics,
-            .content-grid {
+        .empty-state p {
+            color: var(--muted);
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1200px) {
+            .page {
                 grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+                height: auto;
+            }
+
+            .main {
+                padding-top: 8px;
             }
         }
 
-        @media (max-width: 720px) {
-            .topbar {
-                flex-direction: column;
-                align-items: flex-start;
+        @media (max-width: 1080px) {
+            .hero,
+            .metrics,
+            .current-grid,
+            .details-grid,
+            .profile-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="layout">
-        <header class="topbar">
+    <div class="page">
+        <aside class="sidebar">
             <div class="brand">
-                <div class="brand-mark">DP</div>
-                <div>
-                    <h1>Driver Operations Portal</h1>
-                    <p>Focused fleet execution workspace separate from user and admin journeys.</p>
+                <div class="brand-mark">LS</div>
+                <div class="brand-copy">
+                    <h1>LogiSwift</h1>
+                    <p>Driver Operations Console</p>
                 </div>
             </div>
-            <nav class="nav-links">
-                <a href="/">Portal Gateway</a>
-                <a href="/portal/user">User Interface</a>
-                <a href="/portal/admin">Admin Interface</a>
-            </nav>
-        </header>
 
-        <section class="hero">
-            <div>
-                <h2>Monitor fleet readiness and active assignments.</h2>
-                <p>
-                    This interface is tailored to driver-side operations. It gives a clean view of current assignments, available capacity,
-                    and quick navigation into each driver’s workload page.
-                </p>
+            <section class="driver-card">
+                <div class="driver-avatar" th:text="${#strings.substring(driver.name, 0, 1).toUpperCase()}">D</div>
+                <div class="driver-meta">
+                    <span class="sidebar-label">On Duty</span>
+                    <h2 th:text="${driver.name}">Driver Name</h2>
+                    <p th:text="${driver.vehicleType + ' · ' + driver.vehicleNumber}">Vehicle</p>
+                    <span class="status-pill" th:text="${driver.available ? 'Available for Dispatch' : driver.status}">Available</span>
+                </div>
+            </section>
+
+            <section class="nav-card">
+                <span class="sidebar-label">Workspace</span>
+                <nav class="sidebar-nav">
+                    <a href="#current" class="sidebar-link active" data-tab-link="current">
+                        <span>Current Assignment</span>
+                        <small th:text="${activeBookings}">0</small>
+                    </a>
+                    <a href="#history" class="sidebar-link" data-tab-link="history">
+                        <span>Delivery History</span>
+                        <small th:text="${completedBookings}">0</small>
+                    </a>
+                    <a href="#profile" class="sidebar-link" data-tab-link="profile">
+                        <span>Driver Profile</span>
+                        <small>Info</small>
+                    </a>
+                </nav>
+            </section>
+
+            <section class="sidebar-note">
+                <span class="sidebar-label">Mission</span>
+                <h3>Deliver the last mile with calm, speed, and trust.</h3>
+                <p>Every route completed on time strengthens the LogiSwift network and builds customer confidence.</p>
+            </section>
+
+            <form class="logout-form" th:action="@{/logistics/drivers/logout}" method="post">
+                <button type="submit">Logout</button>
+            </form>
+        </aside>
+
+        <main class="main">
+            <div th:if="${successMessage}" class="flash flash-success" th:text="${successMessage}">Success</div>
+            <div th:if="${errorMessage}" class="flash flash-error" th:text="${errorMessage}">Error</div>
+
+            <section class="hero">
+                <div class="hero-panel">
+                    <span class="eyebrow">LogiSwift Driver Hub</span>
+                    <h2>Stay sharp on the road. Stay ahead on every delivery.</h2>
+                    <p>
+                        Designed as a modern logistics cockpit, this workspace gives you a cleaner view of your live assignment,
+                        route intelligence, completion controls, and delivery track record so you can operate with confidence from dispatch to drop-off.
+                    </p>
+                    <div class="hero-pills">
+                        <span>Live route guidance</span>
+                        <span>Focused assignment workflow</span>
+                        <span>Performance-driven delivery</span>
+                    </div>
+                </div>
+
+                <aside class="hero-side">
+                    <span class="sidebar-label">Daily Focus</span>
+                    <strong th:text="${driver.available ? 'Ready for the next mission' : 'Active on route'}">Active on route</strong>
+                    <p th:text="${'Vehicle in service: ' + driver.vehicleType + ' · ' + driver.vehicleNumber}">Vehicle</p>
+                    <p>Precision, pace, and reliability are what make the LogiSwift fleet stand out on every shipment.</p>
+                </aside>
+            </section>
+
+            <section class="metrics">
+                <article class="metric-card">
+                    <span>Current assignments</span>
+                    <strong th:text="${activeBookings}">0</strong>
+                    <small>Jobs actively assigned to you right now.</small>
+                </article>
+                <article class="metric-card">
+                    <span>Completed deliveries</span>
+                    <strong th:text="${completedBookings}">0</strong>
+                    <small>Your completed booking history.</small>
+                </article>
+                <article class="metric-card">
+                    <span>Driver rating</span>
+                    <strong th:text="${driver.rating + '/5'}">0/5</strong>
+                    <small>Quality score visible to operations.</small>
+                </article>
+                <article class="metric-card">
+                    <span>Total assignment value</span>
+                    <strong th:text="${'Rs ' + #numbers.formatDecimal(totalEarnings, 1, 2)}">Rs 0.00</strong>
+                    <small>Combined value of your booking pipeline.</small>
+                </article>
+            </section>
+
+            <div class="tabs">
+                <button class="tab-btn active" type="button" data-tab="current">Current Assignment</button>
+                <button class="tab-btn" type="button" data-tab="history">History</button>
+                <button class="tab-btn" type="button" data-tab="profile">Profile</button>
             </div>
-            <aside class="hero-note">
-                <h3>Shift snapshot</h3>
-                <strong th:text="${activeJobs}">0</strong>
-                <p>active jobs in dispatch flow right now.</p>
-            </aside>
-        </section>
 
-        <section class="metrics">
-            <article class="metric-card">
-                <span>Total drivers</span>
-                <strong th:text="${#lists.size(drivers)}">0</strong>
-                <small class="helper">Fleet members in the system.</small>
-            </article>
-            <article class="metric-card">
-                <span>Available now</span>
-                <strong th:text="${availableDrivers}">0</strong>
-                <small class="helper">Ready for allocation.</small>
-            </article>
-            <article class="metric-card">
-                <span>Engaged now</span>
-                <strong th:text="${engagedDrivers}">0</strong>
-                <small class="helper">Currently on assignment.</small>
-            </article>
-            <article class="metric-card">
-                <span>Delivered today</span>
-                <strong th:text="${deliveredToday}">0</strong>
-                <small class="helper">Completed jobs for the current day.</small>
-            </article>
-        </section>
+            <section id="current" class="tab-panel active">
+                <div class="current-grid">
+                    <section class="content-panel">
+                        <div class="panel-head">
+                            <div>
+                                <h3>Assigned bookings</h3>
+                                <p>Open any assigned booking to inspect customer details, destination coordinates, and completion steps.</p>
+                            </div>
+                        </div>
 
-        <section class="content-grid">
-            <section class="panel">
-                <div class="panel-header">
-                    <div>
-                        <h3>Live assignment board</h3>
-                        <p class="helper">Bookings that still require active operational attention.</p>
-                    </div>
+                        <div class="booking-list" th:if="${not #lists.isEmpty(activeBookingList)}">
+                            <article class="booking-item"
+                                     th:each="booking : ${activeBookingList}"
+                                     th:classappend="${selectedBooking != null and booking.id == selectedBooking.id ? ' selected' : ''}">
+                                <div class="booking-meta">
+                                    <h4 th:text="${'Booking #' + booking.id}">Booking #1</h4>
+                                    <span class="status-chip status-active" th:text="${booking.status.displayName}">Status</span>
+                                </div>
+                                <p th:text="${booking.user.username + ' · ' + booking.user.email}">User</p>
+                                <p th:text="${'Pickup: ' + #numbers.formatDecimal(booking.pickuplat, 1, 3) + ', ' + #numbers.formatDecimal(booking.pickuplon, 1, 3)}">Pickup</p>
+                                <p th:text="${'Destination: ' + #numbers.formatDecimal(booking.dropoffLat, 1, 3) + ', ' + #numbers.formatDecimal(booking.dropoffLon, 1, 3)}">Destination</p>
+                                <a class="select-link" th:href="@{'/logistics/drivers/portal?bookingId=' + ${booking.id} + '#current'}">View Assignment</a>
+                            </article>
+                        </div>
+
+                        <div class="empty-state" th:if="${#lists.isEmpty(activeBookingList)}">
+                            <h4>No assignment in progress</h4>
+                            <p>Your queue is clear right now. When dispatch assigns a booking, it will appear here with live route guidance and delivery actions.</p>
+                        </div>
+                    </section>
+
+                    <section class="content-panel">
+                        <div th:if="${selectedBooking != null}">
+                            <div class="panel-head">
+                                <div>
+                                    <h3 th:text="${'Assignment #' + selectedBooking.id}">Assignment</h3>
+                                    <p>Route intelligence, customer information, and secure completion controls for the currently selected booking.</p>
+                                </div>
+                                <span class="status-chip status-active" th:text="${selectedBooking.status.displayName}">Status</span>
+                            </div>
+
+                            <div class="details-grid">
+                                <article class="detail-card">
+                                    <span>Customer</span>
+                                    <strong th:text="${selectedBooking.user.username}">Customer</strong>
+                                    <p th:text="${selectedBooking.user.email}" style="margin-top:8px; color:var(--muted);">mail@example.com</p>
+                                </article>
+                                <article class="detail-card">
+                                    <span>Assignment value</span>
+                                    <strong th:text="${'Rs ' + #numbers.formatDecimal(selectedBooking.estimatedCost, 1, 2)}">Rs 0.00</strong>
+                                    <p th:text="${selectedBooking.vehicleType}" style="margin-top:8px; color:var(--muted);">Vehicle</p>
+                                </article>
+                                <article class="detail-card">
+                                    <span>Pickup coordinates</span>
+                                    <strong th:text="${#numbers.formatDecimal(selectedBooking.pickuplat, 1, 3) + ', ' + #numbers.formatDecimal(selectedBooking.pickuplon, 1, 3)}">Pickup</strong>
+                                </article>
+                                <article class="detail-card">
+                                    <span>Destination coordinates</span>
+                                    <strong th:text="${#numbers.formatDecimal(selectedBooking.dropoffLat, 1, 3) + ', ' + #numbers.formatDecimal(selectedBooking.dropoffLon, 1, 3)}">Destination</strong>
+                                </article>
+                            </div>
+
+                            <div class="action-strip">
+                                <form th:action="@{'/logistics/drivers/' + ${driver.id} + '/bookings/' + ${selectedBooking.id} + '/send-completion-code'}" method="post">
+                                    <button type="submit" class="action-btn request-btn">Request Verification Code</button>
+                                </form>
+
+                                <form th:action="@{'/logistics/drivers/' + ${driver.id} + '/bookings/' + ${selectedBooking.id} + '/complete'}" method="post">
+                                    <input type="text" name="verificationCode" maxlength="6" placeholder="Enter verification code to complete booking" required>
+                                    <button type="submit" class="action-btn complete-btn">Complete Assignment</button>
+                                </form>
+
+                                <p class="helper" th:if="${selectedBooking.deliveryVerificationSentAt != null}"
+                                   th:text="${'Code sent at ' + #temporals.format(selectedBooking.deliveryVerificationSentAt, 'yyyy-MM-dd HH:mm') + ' | Expires at ' + #temporals.format(selectedBooking.deliveryVerificationExpiresAt, 'yyyy-MM-dd HH:mm')}">
+                                    Code info
+                                </p>
+                            </div>
+
+                            <div class="map-shell">
+                                <h4>Live route guidance</h4>
+                                <p class="helper" style="margin-top:8px;">The route updates from your latest driver location to the selected booking destination.</p>
+                                <div id="map"></div>
+                            </div>
+                        </div>
+
+                        <div class="empty-state" th:if="${selectedBooking == null}">
+                            <h4>Select an assignment</h4>
+                            <p>Choose an assigned booking from the left to open full details, real-time route guidance, and booking completion actions.</p>
+                        </div>
+                    </section>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Booking</th>
-                            <th>Customer</th>
-                            <th>Driver</th>
-                            <th>Status</th>
-                            <th>Route</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="assignment : ${liveAssignments}">
-                            <td th:text="${'#' + assignment.id}">#1</td>
-                            <td th:text="${assignment.user.username}">Customer</td>
-                            <td th:text="${assignment.driver.name}">Driver</td>
-                            <td th:text="${assignment.status.displayName}">Status</td>
-                            <td th:text="${#numbers.formatDecimal(assignment.pickuplat, 1, 3) + ', ' + #numbers.formatDecimal(assignment.pickuplon, 1, 3) + ' -> ' + #numbers.formatDecimal(assignment.dropoffLat, 1, 3) + ', ' + #numbers.formatDecimal(assignment.dropoffLon, 1, 3)}">Route</td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(liveAssignments)}">
-                            <td colspan="5">No live assignments at the moment.</td>
-                        </tr>
-                    </tbody>
-                </table>
             </section>
 
-            <section class="panel">
-                <div class="panel-header">
-                    <div>
-                        <h3>Driver roster</h3>
-                        <p class="helper">Quick access into each driver’s detailed booking view.</p>
+            <section id="history" class="tab-panel">
+                <section class="content-panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Delivery history</h3>
+                            <p>Completed assignments handled by this driver across the LogiSwift network.</p>
+                        </div>
                     </div>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Driver</th>
-                            <th>Vehicle</th>
-                            <th>Status</th>
-                            <th>Rating</th>
-                            <th>Open</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="driver : ${drivers}">
-                            <td th:text="${driver.name}">Driver</td>
-                            <td th:text="${driver.vehicleType + ' · ' + driver.vehicleNumber}">Vehicle</td>
-                            <td>
-                                <span class="status" th:classappend="${driver.available ? ' available' : ' busy'}"
-                                      th:text="${driver.available ? 'Available' : driver.status}">
-                                    Status
-                                </span>
-                            </td>
-                            <td th:text="${driver.rating + '/5'}">0/5</td>
-                            <td><a class="link-btn" th:href="@{'/logistics/drivers/' + ${driver.id} + '/allbooking'}">Open</a></td>
-                        </tr>
-                    </tbody>
-                </table>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Booking</th>
+                                <th>User</th>
+                                <th>Created at</th>
+                                <th>Delivered at</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="booking : ${bookingHistory}">
+                                <td th:text="${'#' + booking.id}">#1</td>
+                                <td th:text="${booking.user.username}">User</td>
+                                <td th:text="${#temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}">Created</td>
+                                <td th:text="${booking.deliverAt != null ? #temporals.format(booking.deliverAt, 'yyyy-MM-dd HH:mm') : '-'}">Delivered</td>
+                                <td th:text="${'Rs ' + #numbers.formatDecimal(booking.estimatedCost, 1, 2)}">Rs 0.00</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(bookingHistory)}">
+                                <td colspan="5">No completed bookings yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
             </section>
-        </section>
+
+            <section id="profile" class="tab-panel">
+                <section class="content-panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Driver profile</h3>
+                            <p>Identity, licensing, vehicle details, and latest operational information for this account.</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-grid">
+                        <article class="detail-card">
+                            <span>Name</span>
+                            <strong th:text="${driver.name}">Driver Name</strong>
+                        </article>
+                        <article class="detail-card">
+                            <span>License number</span>
+                            <strong th:text="${driver.licenseNumber}">License</strong>
+                        </article>
+                        <article class="detail-card">
+                            <span>Vehicle type</span>
+                            <strong th:text="${driver.vehicleType}">Vehicle</strong>
+                        </article>
+                        <article class="detail-card">
+                            <span>Vehicle number</span>
+                            <strong th:text="${driver.vehicleNumber}">Number</strong>
+                        </article>
+                        <article class="detail-card">
+                            <span>Driver rating</span>
+                            <strong th:text="${driver.rating + '/5'}">0/5</strong>
+                        </article>
+                        <article class="detail-card">
+                            <span>Last known location</span>
+                            <strong th:text="${driver.driverLat + ', ' + driver.driverLon}">Location</strong>
+                        </article>
+                    </div>
+                </section>
+            </section>
+        </main>
     </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script th:inline="javascript">
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+        const sidebarLinks = document.querySelectorAll('[data-tab-link]');
+
+        function activateTab(tabName) {
+            tabButtons.forEach(button => button.classList.toggle('active', button.dataset.tab === tabName));
+            tabPanels.forEach(panel => panel.classList.toggle('active', panel.id === tabName));
+            sidebarLinks.forEach(link => link.classList.toggle('active', link.dataset.tabLink === tabName));
+        }
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => activateTab(button.dataset.tab));
+        });
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', event => {
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    event.preventDefault();
+                    activateTab(link.dataset.tabLink);
+                }
+            });
+        });
+
+        const hashTab = window.location.hash ? window.location.hash.replace('#', '') : '';
+        if (hashTab) {
+            activateTab(hashTab);
+        }
+
+        const selectedBookingDestinationLat = /*[[${selectedBookingDestinationLat}]]*/ null;
+        const selectedBookingDestinationLon = /*[[${selectedBookingDestinationLon}]]*/ null;
+        const driverId = /*[[${driverId}]]*/ null;
+        const initialDriverLat = /*[[${initialDriverLat}]]*/ null;
+        const initialDriverLon = /*[[${initialDriverLon}]]*/ null;
+
+        if (selectedBookingDestinationLat !== null && selectedBookingDestinationLon !== null && driverId !== null) {
+            const destination = {
+                latitude: selectedBookingDestinationLat,
+                longitude: selectedBookingDestinationLon
+            };
+
+            const map = L.map('map').setView([initialDriverLat, initialDriverLon], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            const destinationMarker = L.marker([destination.latitude, destination.longitude]).addTo(map)
+                .bindPopup('Destination');
+
+            let driverMarker;
+            let routingControl;
+
+            function renderRoute(latitude, longitude) {
+                if (!driverMarker) {
+                    driverMarker = L.marker([latitude, longitude]).addTo(map).bindPopup('Driver');
+                } else {
+                    driverMarker.setLatLng([latitude, longitude]);
+                }
+
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                }
+
+                routingControl = L.Routing.control({
+                    waypoints: [
+                        L.latLng(latitude, longitude),
+                        L.latLng(destination.latitude, destination.longitude)
+                    ],
+                    routeWhileDragging: false,
+                    showAlternatives: false,
+                    addWaypoints: false,
+                    fitSelectedRoutes: true
+                }).addTo(map);
+            }
+
+            async function updateDriverLocation() {
+                try {
+                    const response = await fetch(`/api/driver-location/${driverId}`);
+                    if (!response.ok) {
+                        renderRoute(initialDriverLat, initialDriverLon);
+                        return;
+                    }
+                    const location = await response.json();
+                    renderRoute(location.latitude, location.longitude);
+                } catch (error) {
+                    renderRoute(initialDriverLat, initialDriverLon);
+                }
+            }
+
+            destinationMarker.openPopup();
+            updateDriverLocation();
+            setInterval(updateDriverLocation, 10000);
+        }
+    </script>
 </body>
 </html>

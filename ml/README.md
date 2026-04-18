@@ -27,10 +27,12 @@ curl "http://localhost:8081/logistics/ai/feature-snapshots/export.csv?labeledOnl
 ```
 
 ## Train the model
-Install Python dependencies:
+Create a virtualenv and install dependencies:
 
 ```bash
-pip install pandas scikit-learn joblib fastapi uvicorn
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r ml/requirements.txt
 ```
 
 Train:

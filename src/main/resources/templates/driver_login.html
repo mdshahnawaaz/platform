@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #132238;
+            --muted: #65758b;
+            --bg: #f3f6fb;
+            --surface: #ffffff;
+            --primary: #0f766e;
+            --line: rgba(19, 34, 56, 0.08);
+            --shadow: 0 22px 54px rgba(19, 34, 56, 0.10);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            font-family: 'Manrope', sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 18%),
+                linear-gradient(180deg, #f8fbff, var(--bg));
+        }
+
+        .card {
+            width: min(540px, 100%);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 32px;
+            box-shadow: var(--shadow);
+            padding: 34px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+        }
+
+        p {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        form {
+            display: grid;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid rgba(19, 34, 56, 0.12);
+            padding: 14px 16px;
+            font: inherit;
+        }
+
+        button {
+            border: none;
+            border-radius: 16px;
+            padding: 14px 16px;
+            background: linear-gradient(135deg, var(--primary), #2ab5a6);
+            color: white;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .flash {
+            padding: 14px 16px;
+            border-radius: 18px;
+            margin-top: 18px;
+            font-weight: 600;
+            background: rgba(217, 119, 6, 0.12);
+            color: #d97706;
+        }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <h1>Driver login</h1>
+        <p>Log in with your driver ID and license number to view your current assigned booking, live route map, booking history, and profile details.</p>
+
+        <div th:if="${errorMessage}" class="flash" th:text="${errorMessage}">Invalid login.</div>
+
+        <form th:action="@{/logistics/drivers/login}" method="post">
+            <div>
+                <label for="driverId">Driver ID</label>
+                <input id="driverId" name="driverId" type="number" min="1" required>
+            </div>
+            <div>
+                <label for="licenseNumber">License number</label>
+                <input id="licenseNumber" name="licenseNumber" type="text" required>
+            </div>
+            <button type="submit">Login to Driver Workspace</button>
+        </form>
+    </main>
+</body>
+</html>
