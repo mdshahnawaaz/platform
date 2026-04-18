@@ -43,6 +43,26 @@
             text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
         }
 
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 1.5rem;
+        }
+
+        .topbar a,
+        .topbar button {
+            padding: 0.8rem 1.1rem;
+            border-radius: 999px;
+            border: none;
+            text-decoration: none;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
         h1 {
             font-size: 3rem;
             transform: translateZ(50px);
@@ -247,6 +267,12 @@
 </head>
 <body>
     <div class="container">
+        <div class="topbar">
+            <a href="/portal/user">Back to User Home</a>
+            <form th:action="@{/portal/user/logout}" method="post">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
         <h1>Ride Estimation and Booking</h1>
         
         <h2>Estimate Ride Price</h2>
@@ -300,7 +326,7 @@
 
         <h2>Book Your Ride</h2>
         <form th:action="@{/logistics/bookings}" method="post">
-            <input type="hidden" name="userId" value="1"/>
+            <input type="hidden" name="userId" th:value="${loggedInUserId}"/>
             <input type="hidden" name="pickupLat" id="hiddenPickupLat"/>
             <input type="hidden" name="pickupLon" id="hiddenPickupLon"/>
             <input type="hidden" name="dropoffLat" id="hiddenDropoffLat"/>

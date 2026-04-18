@@ -60,6 +60,7 @@
         .nav-links {
             display: flex;
             gap: 20px;
+            align-items: center;
         }
 
         .nav-links a {
@@ -67,6 +68,21 @@
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
+        }
+
+        .nav-links form {
+            margin: 0;
+        }
+
+        .nav-button {
+            border: none;
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text-color);
+            border-radius: 999px;
+            padding: 10px 16px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
         }
 
         .nav-links a:hover {
@@ -202,6 +218,77 @@
             background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
         }
 
+        .account-section {
+            padding: 100px 0;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .account-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 22px;
+            margin-bottom: 32px;
+        }
+
+        .account-card,
+        .history-card {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.22);
+        }
+
+        .account-card strong {
+            display: block;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-top: 10px;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .history-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 18px;
+            color: var(--primary-color);
+        }
+
+        .history-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .history-item {
+            padding: 16px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .history-item strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .history-item p {
+            margin: 4px 0;
+            font-size: 0.95rem;
+        }
+
+        .user-pill {
+            display: inline-flex;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(74, 144, 226, 0.15);
+            color: var(--primary-color);
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
         .tracking-form {
             max-width: 500px;
             margin: 0 auto;
@@ -245,6 +332,10 @@
             .services h2, .why-choose-us h2 {
                 font-size: 2.5rem;
             }
+            .account-grid,
+            .history-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -257,7 +348,12 @@
                 <a href="#services">Services</a>
                 <a href="#why-choose-us">Why Us</a>
                 <a href="#tracking">Tracking</a>
+                <a href="#account">My Activity</a>
                 <a href="/logistics/contact/contact">Contact Us</a>
+                <a href="/hi">Book Now</a>
+                <form th:action="@{/portal/user/logout}" method="post">
+                    <button type="submit" class="nav-button">Logout</button>
+                </form>
             </div>
         </nav>
     </header>
@@ -349,6 +445,67 @@
                         <input type="text" id="trackingNumber" placeholder="Enter tracking number" required>
                         <button type="submit" class="btn">Track Now</button>
                     </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="account" class="account-section">
+            <div class="container">
+                <div class="user-pill" th:text="${'Logged in as ' + user.username}">Logged in</div>
+                <h2>Your Activity</h2>
+
+                <div class="account-grid">
+                    <div class="account-card">
+                        Active Bookings
+                        <strong th:text="${#lists.size(activeUserBookings)}">0</strong>
+                    </div>
+                    <div class="account-card">
+                        Completed Bookings
+                        <strong th:text="${#lists.size(completedUserBookings)}">0</strong>
+                    </div>
+                    <div class="account-card">
+                        Total Orders
+                        <strong th:text="${#lists.size(userBookings)}">0</strong>
+                    </div>
+                    <div class="account-card">
+                        Total Spend
+                        <strong th:text="${'Rs ' + #numbers.formatDecimal(userTotalSpend, 1, 2)}">Rs 0.00</strong>
+                    </div>
+                </div>
+
+                <div class="history-grid">
+                    <div class="history-card">
+                        <h3>Active Booking History</h3>
+                        <div class="history-list" th:if="${not #lists.isEmpty(activeUserBookings)}">
+                            <div class="history-item" th:each="booking : ${activeUserBookings}">
+                                <strong th:text="${'Booking #' + booking.id}">Booking</strong>
+                                <p th:text="${'Status: ' + booking.status.displayName}">Status</p>
+                                <p th:text="${'Vehicle: ' + booking.vehicleType}">Vehicle</p>
+                                <p th:text="${'Created: ' + #temporals.format(booking.createdAt, 'yyyy-MM-dd HH:mm')}">Created</p>
+                                <p th:text="${'Amount: Rs ' + #numbers.formatDecimal(booking.estimatedCost, 1, 2)}">Amount</p>
+                            </div>
+                        </div>
+                        <div class="history-item" th:if="${#lists.isEmpty(activeUserBookings)}">
+                            <strong>No active booking</strong>
+                            <p>Your currently running orders will appear here.</p>
+                        </div>
+                    </div>
+
+                    <div class="history-card">
+                        <h3>Completed Booking History</h3>
+                        <div class="history-list" th:if="${not #lists.isEmpty(completedUserBookings)}">
+                            <div class="history-item" th:each="booking : ${completedUserBookings}">
+                                <strong th:text="${'Booking #' + booking.id}">Booking</strong>
+                                <p th:text="${'Delivered: ' + (booking.deliverAt != null ? #temporals.format(booking.deliverAt, 'yyyy-MM-dd HH:mm') : '-')}">Delivered</p>
+                                <p th:text="${'Vehicle: ' + booking.vehicleType}">Vehicle</p>
+                                <p th:text="${'Amount: Rs ' + #numbers.formatDecimal(booking.estimatedCost, 1, 2)}">Amount</p>
+                            </div>
+                        </div>
+                        <div class="history-item" th:if="${#lists.isEmpty(completedUserBookings)}">
+                            <strong>No completed booking yet</strong>
+                            <p>Your completed delivery history will appear here.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

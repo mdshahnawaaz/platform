@@ -15,6 +15,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     // long countByStatus(String status);
     // List<Booking> findByStatus(String status);
     List<Booking> findByDriverId(int driverId);
+    List<Booking> findByUserId(int userId);
     
     @Query(value="select count(*) from Bookings where driver_id = :id",nativeQuery=true)
     int countByDriver(int id);

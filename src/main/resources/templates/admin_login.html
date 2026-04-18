@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            font-family: 'Manrope', sans-serif;
+            background: linear-gradient(180deg, #f7fafc, #e9f0f8);
+            color: #112031;
+        }
+        .card {
+            width: min(520px, 100%);
+            padding: 34px;
+            border-radius: 28px;
+            background: white;
+            box-shadow: 0 22px 54px rgba(17, 32, 49, 0.12);
+        }
+        h1 {
+            margin: 0 0 12px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        p { color: #61758a; line-height: 1.7; }
+        label { display:block; margin: 14px 0 8px; font-weight: 700; }
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(17,32,49,0.12);
+            font: inherit;
+        }
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 14px;
+            border: none;
+            border-radius: 16px;
+            background: #0f4c81;
+            color: white;
+            font: inherit;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .flash {
+            margin-top: 18px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(194, 65, 12, 0.12);
+            color: #c2410c;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <h1>Admin Control Tower Login</h1>
+        <p>Sign in to access the full LogiSwift admin workspace, fleet visibility, analytics, and operational controls.</p>
+        <div th:if="${errorMessage}" class="flash" th:text="${errorMessage}">Invalid login.</div>
+        <form th:action="@{/logistics/admin/login}" method="post">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" required>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required>
+            <button type="submit">Login to Admin Interface</button>
+        </form>
+    </main>
+</body>
+</html>

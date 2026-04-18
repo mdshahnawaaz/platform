@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.logistic.platform.models.DemandFeatureSnapshot;
 import com.logistic.platform.models.DemandModelInput;
 import com.logistic.platform.models.DemandModelOutput;
+import com.logistic.platform.models.DemandModelStatus;
 import com.logistic.platform.models.DemandTrainingSpec;
 import com.logistic.platform.services.DemandDatasetService;
 import com.logistic.platform.services.DemandFeatureSnapshotService;
@@ -81,5 +82,10 @@ public class AiOpsController {
         return demandModelIntegrationService.scoreLiveDemand(vehicleType)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    @GetMapping("/model-status")
+    public DemandModelStatus getModelStatus() {
+        return demandModelIntegrationService.getStatus();
     }
 }

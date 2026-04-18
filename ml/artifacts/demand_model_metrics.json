@@ -1,0 +1,22 @@
+{
+  "mae": 0.2988,
+  "r2": 0.3011,
+  "training_rows": 14,
+  "test_rows": 4,
+  "feature_columns": [
+    "hour_of_day",
+    "day_of_week",
+    "is_weekend",
+    "bookings_last_15m",
+    "bookings_last_30m",
+    "bookings_last_60m",
+    "active_bookings",
+    "available_drivers",
+    "avg_estimated_cost_last_60m",
+    "avg_trip_distance_last_60m",
+    "current_demand_factor",
+    "vehicle_type"
+  ],
+  "target_column": "target_bookings_next_30m",
+  "model_type": "RandomForestRegressor"
+}

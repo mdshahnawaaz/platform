@@ -3,6 +3,7 @@ package com.logistic.platform.services;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -11,6 +12,7 @@ import org.springframework.web.client.RestClient;
 
 import com.logistic.platform.models.DemandModelInput;
 import com.logistic.platform.models.DemandModelOutput;
+import com.logistic.platform.models.DemandModelStatus;
 import com.logistic.platform.repository.BookingRepository;
 import com.logistic.platform.repository.DriverRepository;
 
@@ -20,6 +22,10 @@ public class DemandModelIntegrationService {
     private final BookingRepository bookingRepository;
     private final DriverRepository driverRepository;
     private final RestClient restClient;
+    private final AtomicReference<String> lastAttemptAt = new AtomicReference<>(null);
+    private final AtomicReference<String> lastSuccessAt = new AtomicReference<>(null);
+    private final AtomicReference<String> lastSuccessModelSource = new AtomicReference<>(null);
+    private final AtomicReference<String> lastError = new AtomicReference<>(null);
 
     @Value("${ai.model.enabled:false}")
     private boolean modelEnabled;
@@ -59,7 +65,9 @@ public class DemandModelIntegrationService {
     }
 
     public Optional<DemandModelOutput> scoreLiveDemand(String vehicleType) {
+        lastAttemptAt.set(LocalDateTime.now().toString());
         if (!modelEnabled) {
+            lastError.set("ai.model.enabled=false");
             return Optional.empty();
         }
 
@@ -72,10 +80,26 @@ public class DemandModelIntegrationService {
                     .retrieve()
                     .body(DemandModelOutput.class);
 
+            if (output != null) {
+                lastSuccessAt.set(LocalDateTime.now().toString());
+                lastSuccessModelSource.set(output.modelSource());
+                lastError.set(null);
+            }
             return Optional.ofNullable(output);
         } catch (Exception ex) {
+            lastError.set(ex.getClass().getSimpleName() + ": " + ex.getMessage());
             return Optional.empty();
         }
+    }
+
+    public DemandModelStatus getStatus() {
+        return new DemandModelStatus(
+                modelEnabled,
+                modelBaseUrl,
+                lastAttemptAt.get(),
+                lastSuccessAt.get(),
+                lastSuccessModelSource.get(),
+                lastError.get());
     }
 
     private BigDecimal averageEstimatedCostLastHour(String vehicleType, LocalDateTime start, LocalDateTime end) {

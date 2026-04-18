@@ -98,6 +98,12 @@ public class DriverService {
                 .toList();
     }
 
+    public Optional<Driver> authenticateDriver(int driverId, String licenseNumber) {
+        return driverRepository.findById(driverId)
+                .filter(driver -> driver.getLicenseNumber() != null)
+                .filter(driver -> driver.getLicenseNumber().equalsIgnoreCase(licenseNumber == null ? "" : licenseNumber.trim()));
+    }
+
     public void sendDeliveryCompletionCode(int driverId, int bookingId) {
         Driver driver = getDriverOrThrow(driverId);
         Booking booking = getAssignedBookingOrThrow(driver, bookingId);

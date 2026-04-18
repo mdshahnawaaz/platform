@@ -111,4 +111,8 @@ public class BookingService {
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
+
+    public List<Booking> getUserBookings(int userId) {
+        return bookingRepository.findByUserId(userId);
+    }
 }

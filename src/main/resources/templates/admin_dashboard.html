@@ -101,12 +101,19 @@
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
-        .top-links a {
+        .top-links a,
+        .top-links button {
             padding: 10px 14px;
             border-radius: 999px;
             background: #f7fafc;
+            border: none;
+            font: inherit;
+            cursor: pointer;
+            color: var(--ink);
+            text-decoration: none;
         }
 
         .hero {
@@ -278,6 +285,9 @@
                 <a href="/portal/user">User Interface</a>
                 <a href="/portal/driver">Driver Interface</a>
                 <a href="/logistics/admin/bookings">Fleet Records</a>
+                <form th:action="@{/logistics/admin/logout}" method="post" style="margin:0;">
+                    <button type="submit">Logout</button>
+                </form>
             </nav>
         </header>
 
