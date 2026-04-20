@@ -19,6 +19,7 @@ public record AdminDashboardData(
         List<Long> weeklyBookingCounts,
         List<BigDecimal> weeklyRevenue,
         Map<String, Long> bookingStatusBreakdown,
+        EtaAccuracySummary etaAccuracy,
         List<Booking> recentBookings,
         List<DriverPerformanceView> topDrivers) {
 }

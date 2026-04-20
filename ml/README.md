@@ -56,3 +56,56 @@ ai.model.base-url=http://localhost:8000
 ```
 
 - Then call `/logistics/ai/model-score?vehicleType=standard`
+
+---
+
+# ETA ML Flow
+
+## Feature columns
+- `hour_of_day`
+- `day_of_week`
+- `is_weekend`
+- `trip_distance_km`
+- `driver_to_pickup_distance_km`
+- `demand_factor`
+- `driver_assigned`
+- `live_driver_location_used`
+- `vehicle_type`
+
+## Target
+- `actual_total_duration_minutes`
+
+This is a regression problem: predict total ETA from booking creation to delivery completion.
+
+## Export training data
+Use:
+
+```bash
+curl "http://localhost:8080/logistics/ai/eta/export.csv?completedOnly=true" -o data/eta_training_data.csv
+```
+
+## Train the model
+
+```bash
+python3 ml/train_eta_model.py --input data/eta_training_data.csv --output-dir ml/artifacts
+```
+
+## Serve the model
+```bash
+uvicorn ml.serve_eta_model:app --reload --port 8001
+```
+
+## Java integration path
+- Preview ETA training schema at `/logistics/ai/eta/schema`
+- Preview a live booking payload at `/logistics/ai/eta/bookings/{bookingId}/model-input`
+- Score a booking with the Python ETA model at `/logistics/ai/eta/bookings/{bookingId}/model-score`
+- Check ETA model status at `/logistics/ai/eta/model-status`
+
+Enable external ETA scoring with:
+
+```properties
+ai.eta.model.enabled=true
+ai.eta.model.base-url=http://localhost:8001
+```
+
+The app keeps using heuristic ETA automatically when the ETA model is disabled or unavailable.

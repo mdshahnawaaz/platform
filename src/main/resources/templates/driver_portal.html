@@ -762,6 +762,16 @@
                                     <span>Destination coordinates</span>
                                     <strong th:text="${#numbers.formatDecimal(selectedBooking.dropoffLat, 1, 3) + ', ' + #numbers.formatDecimal(selectedBooking.dropoffLon, 1, 3)}">Destination</strong>
                                 </article>
+                                <article class="detail-card">
+                                    <span>Pickup ETA</span>
+                                    <strong th:text="${selectedBookingEta != null and selectedBookingEta.driverArrivalMinutes != null ? selectedBookingEta.driverArrivalMinutes + ' min' : 'N/A'}">0 min</strong>
+                                    <p style="margin-top:8px; color:var(--muted);">Driver to pickup</p>
+                                </article>
+                                <article class="detail-card">
+                                    <span>Completion ETA</span>
+                                    <strong th:text="${selectedBookingEta != null ? selectedBookingEta.totalEtaMinutes + ' min' : 'N/A'}">0 min</strong>
+                                    <p th:text="${selectedBookingEta != null ? selectedBookingEta.confidence + ' confidence · ' + selectedBookingEta.modelSource : 'ETA unavailable'}" style="margin-top:8px; color:var(--muted);">ETA source</p>
+                                </article>
                             </div>
 
                             <div class="action-strip">

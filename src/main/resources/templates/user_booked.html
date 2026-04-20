@@ -232,6 +232,12 @@
     <p><strong>Surge Expected:</strong> <span th:text="${pricingQuote.surgeExpected ? 'Yes' : 'No'}">No</span></p>
     <p><strong>Pricing Note:</strong> <span th:text="${pricingQuote.pricingMessage}">Demand is normal right now.</span></p>
     <p><strong>Area Insight:</strong> <span th:text="${pricingQuote.areaMessage}">This route is in a normal demand area.</span></p>
+    <p><strong>Driver Arrival ETA:</strong> <span id="driverArrivalEta" th:text="${etaQuote.driverArrivalMinutes != null ? etaQuote.driverArrivalMinutes + ' min' : 'Driver assignment required'}">-</span></p>
+    <p><strong>Delivery ETA:</strong> <span id="deliveryEta" th:text="${etaQuote.deliveryMinutes + ' min'}">-</span></p>
+    <p><strong>Total ETA:</strong> <span id="totalEta" th:text="${etaQuote.totalEtaMinutes + ' min'}">-</span></p>
+    <p><strong>ETA Confidence:</strong> <span id="etaConfidence" th:text="${etaQuote.confidence}">MEDIUM</span></p>
+    <p><strong>ETA Source:</strong> <span id="etaSource" th:text="${etaQuote.modelSource}">heuristic</span></p>
+    <p><strong>ETA Note:</strong> <span id="etaMessage" th:text="${etaQuote.summaryMessage}">Approximate delivery in 30 minutes.</span></p>
      
     <div class="btn-container">
         <button class="btn" onclick="showBillingDetails()">Price: <span th:text="${estimate_price}">$50.00</span></button>
@@ -247,15 +253,37 @@
         <p><strong>Total Amount:</strong> Rs <span th:text="${pricingQuote.estimatedPrice}">50.00</span></p>
     </div>
 
-    <script>
+    <script th:inline="javascript">
         function showBillingDetails() {
             const billingDetails = document.getElementById('billingDetails');
             billingDetails.style.display = billingDetails.style.display === 'none' ? 'block' : 'none';
         }
 
-        function estimateTime() {
-            alert('Estimating time...');
-            // Implement the logic to fetch and display estimated time
+        async function estimateTime() {
+            const bookingId = /*[[${bookingId}]]*/ 0;
+            if (!bookingId) {
+                alert('Booking ETA is not available right now.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/logistics/eta/bookings/${bookingId}`);
+                if (!response.ok) {
+                    throw new Error('ETA request failed');
+                }
+                const eta = await response.json();
+                document.getElementById('driverArrivalEta').innerText = eta.driverArrivalMinutes !== null
+                    ? `${eta.driverArrivalMinutes} min`
+                    : 'Driver assignment required';
+                document.getElementById('deliveryEta').innerText = `${eta.deliveryMinutes} min`;
+                document.getElementById('totalEta').innerText = `${eta.totalEtaMinutes} min`;
+                document.getElementById('etaConfidence').innerText = eta.confidence;
+                document.getElementById('etaSource').innerText = eta.modelSource;
+                document.getElementById('etaMessage').innerText = eta.summaryMessage;
+            } catch (error) {
+                console.error('Error fetching ETA:', error);
+                alert('Unable to refresh ETA right now. Please try again.');
+            }
         }
 
         function trackDriver() {
