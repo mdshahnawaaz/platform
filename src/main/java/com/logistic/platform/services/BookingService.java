@@ -12,6 +12,7 @@ import com.logistic.platform.models.Booking;
 import com.logistic.platform.models.BookingCreationResult;
 import com.logistic.platform.models.BookingStatus;
 import com.logistic.platform.models.Driver;
+import com.logistic.platform.models.EtaQuote;
 import com.logistic.platform.models.PricingQuote;
 import com.logistic.platform.models.User;
 import com.logistic.platform.repository.BookingRepository;
@@ -31,6 +32,9 @@ public class BookingService {
 
     @Autowired
     private MatchingService matchingService;
+
+    @Autowired
+    private EtaPredictionService etaPredictionService;
 
     public BookingCreationResult createBooking(int userId, double pickupLat, double pickupLon, double dropoffLat,double dropoffLon, String vehicleType) {
         Optional<User> userOpt = userRepository.findById(userId);
@@ -57,6 +61,13 @@ public class BookingService {
         booking.setEstimatedCost(pricingQuote.estimatedPrice());
         booking.setCreatedAt(LocalDateTime.now());
         booking.setStatus(BookingStatus.PENDING);
+        EtaQuote initialEtaQuote = etaPredictionService.estimateBeforeBooking(
+                pickupLat,
+                pickupLon,
+                dropoffLat,
+                dropoffLon,
+                vehicleType);
+        etaPredictionService.applyPredictionSnapshot(booking, initialEtaQuote);
         booking = bookingRepository.save(booking);
 
         Driver dr=matchingService.findMatchingDriver(booking);
@@ -66,6 +77,8 @@ public class BookingService {
             booking.setStatus(BookingStatus.UNDER_PROCESS);
         
         booking.setDriver(dr);
+        EtaQuote latestEtaQuote = etaPredictionService.estimateForBooking(booking);
+        etaPredictionService.applyPredictionSnapshot(booking, latestEtaQuote);
         booking = bookingRepository.save(booking);
         return new BookingCreationResult(booking, pricingQuote);
     }
@@ -81,11 +94,13 @@ public class BookingService {
         }
 
         Booking booking = bookingOpt.get();
-        booking.setDeliverAt(LocalDateTime.now());
-        if(status.equalsIgnoreCase("under process"))
+        if(status.equalsIgnoreCase("under process")) {
             booking.setStatus(BookingStatus.UNDER_PROCESS);
-        else
+            booking.setDeliverAt(null);
+        } else {
             booking.setStatus(BookingStatus.DELIVERED);
+            booking.setDeliverAt(LocalDateTime.now());
+        }
             
         return bookingRepository.save(booking);
     }

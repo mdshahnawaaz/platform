@@ -22,6 +22,7 @@ import com.logistic.platform.models.Booking;
 import com.logistic.platform.models.BookingStatus;
 import com.logistic.platform.models.Driver;
 import com.logistic.platform.models.DriverPerformanceView;
+import com.logistic.platform.models.EtaAccuracySummary;
 import com.logistic.platform.repository.BookingRepository;
 import com.logistic.platform.repository.DriverRepository;
 import com.logistic.platform.repository.UserRepository;
@@ -37,6 +38,9 @@ public class AdminService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EtaPredictionService etaPredictionService;
 
     // Fleet Management
     public List<Driver> getAllDrivers() {
@@ -129,6 +133,8 @@ public class AdminService {
                 .limit(6)
                 .toList();
 
+        EtaAccuracySummary etaAccuracy = etaPredictionService.buildAccuracySummary(bookings);
+
         Map<Integer, Long> completedTripsByDriver = bookings.stream()
                 .filter(booking -> booking.getStatus() == BookingStatus.DELIVERED)
                 .filter(booking -> booking.getDriver() != null)
@@ -189,6 +195,7 @@ public class AdminService {
                 weeklyBookingCounts,
                 weeklyRevenue,
                 bookingStatusBreakdown,
+                etaAccuracy,
                 recentBookings,
                 topDrivers);
     }

@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.logistic.platform.models.Booking;
 import com.logistic.platform.models.BookingCreationResult;
+import com.logistic.platform.models.EtaQuote;
 import com.logistic.platform.models.PricingQuote;
 import com.logistic.platform.services.BookingService;
+import com.logistic.platform.services.EtaPredictionService;
 
 
 @Controller
@@ -24,6 +26,9 @@ public class BookingController {
     
     @Autowired
     private BookingService bookingService;
+
+    @Autowired
+    private EtaPredictionService etaPredictionService;
 
     @PostMapping
     public String createBooking(  @RequestParam int userId,
@@ -42,15 +47,18 @@ public class BookingController {
                 vehicleType);
         Booking booking = bookingCreationResult.booking();
         PricingQuote pricingQuote = bookingCreationResult.pricingQuote();
+        EtaQuote etaQuote = etaPredictionService.estimateForBooking(booking);
         System.out.println("bookng details are" + booking);
         if(booking.getDriver()!=null)
         {
+            model.addAttribute("bookingId", booking.getId());
             model.addAttribute("driverId",booking.getDriver().getId());
             model.addAttribute("driver_vehicleType", booking.getDriver().getVehicleType());
             model.addAttribute("driver_name", booking.getDriver().getName());
             model.addAttribute("driver_rating", booking.getDriver().getRating());
             model.addAttribute("estimate_price", booking.getEstimatedCost());
             model.addAttribute("pricingQuote", pricingQuote);
+            model.addAttribute("etaQuote", etaQuote);
             return "user_booked";
         }
 
@@ -60,6 +68,7 @@ public class BookingController {
             model.addAttribute("dropoffLon", dropoffLon);
             model.addAttribute("estimate_price", booking.getEstimatedCost());
             model.addAttribute("pricingQuote", pricingQuote);
+            model.addAttribute("etaQuote", etaQuote);
             return "driver_not_allocated";
         
         // return ResponseEntity.ok(booking);

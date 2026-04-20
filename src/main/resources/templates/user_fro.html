@@ -214,14 +214,18 @@
                 return;
             }
 
-            estimateText.innerText = 'Fetching AI fare estimate...';
+            estimateText.innerText = 'Fetching fare and ETA estimate...';
 
             try {
-                const response = await fetch(`/logistics/pricing/estimate?pickupLat=${pickupLat}&pickupLon=${pickupLon}&dropoffLat=${dropoffLat}&dropoffLon=${dropoffLon}&vehicleType=${vehicleType}`);
-                if (!response.ok) {
+                const [priceResponse, etaResponse] = await Promise.all([
+                    fetch(`/logistics/pricing/estimate?pickupLat=${pickupLat}&pickupLon=${pickupLon}&dropoffLat=${dropoffLat}&dropoffLon=${dropoffLon}&vehicleType=${vehicleType}`),
+                    fetch(`/logistics/eta/estimate?pickupLat=${pickupLat}&pickupLon=${pickupLon}&dropoffLat=${dropoffLat}&dropoffLon=${dropoffLon}&vehicleType=${vehicleType}`)
+                ]);
+                if (!priceResponse.ok || !etaResponse.ok) {
                     throw new Error('Estimate request failed');
                 }
-                const quote = await response.json();
+                const quote = await priceResponse.json();
+                const eta = await etaResponse.json();
 
                 estimateText.innerText = `Estimated Price: Rs ${quote.estimatedPrice}`;
                 document.getElementById('quoteDistance').innerText = `${quote.distanceKm} km`;
@@ -237,6 +241,11 @@
                 document.getElementById('quotePricingMessage').innerText = quote.pricingMessage;
                 document.getElementById('quoteAreaMessage').innerText = quote.areaMessage;
                 document.getElementById('quoteAdjustment').innerText = `${quote.priceAdjustmentPercent}%`;
+                document.getElementById('quoteDeliveryEta').innerText = `${eta.deliveryMinutes} min`;
+                document.getElementById('quoteTotalEta').innerText = `${eta.totalEtaMinutes} min`;
+                document.getElementById('quoteEtaConfidence').innerText = eta.confidence;
+                document.getElementById('quoteEtaSource').innerText = eta.modelSource;
+                document.getElementById('quoteEtaMessage').innerText = eta.summaryMessage;
 
                 const demandBadge = document.getElementById('quoteDemandBadge');
                 demandBadge.className = 'demand-badge';
@@ -319,9 +328,14 @@
             <div class="quote-row"><span>Predicted Demand</span><span id="quotePredictedDemand">-</span></div>
             <div class="quote-row"><span>Prediction Source</span><span id="quoteModelSource">-</span></div>
             <div class="quote-row"><span>Surge Expected</span><span id="quoteSurge">-</span></div>
+            <div class="quote-row"><span>Approx Delivery ETA</span><span id="quoteDeliveryEta">-</span></div>
+            <div class="quote-row"><span>Total ETA</span><span id="quoteTotalEta">-</span></div>
+            <div class="quote-row"><span>ETA Confidence</span><span id="quoteEtaConfidence">-</span></div>
+            <div class="quote-row"><span>ETA Source</span><span id="quoteEtaSource">-</span></div>
             <div class="quote-row"><span>Estimated Price</span><span id="quoteEstimatedPrice">-</span></div>
             <p id="quotePricingMessage" class="quote-note">-</p>
             <p id="quoteAreaMessage" class="quote-note">-</p>
+            <p id="quoteEtaMessage" class="quote-note">-</p>
         </div>
 
         <h2>Book Your Ride</h2>

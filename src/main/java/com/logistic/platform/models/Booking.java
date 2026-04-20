@@ -64,6 +64,24 @@ public class Booking {
     @Column(name = "delivery_verification_sent_at")
     private LocalDateTime deliveryVerificationSentAt;
 
+    @Column(name = "predicted_pickup_eta_minutes")
+    private Integer predictedPickupEtaMinutes;
+
+    @Column(name = "predicted_delivery_eta_minutes")
+    private Integer predictedDeliveryEtaMinutes;
+
+    @Column(name = "predicted_total_eta_minutes")
+    private Integer predictedTotalEtaMinutes;
+
+    @Column(name = "predicted_eta_generated_at")
+    private LocalDateTime predictedEtaGeneratedAt;
+
+    @Column(name = "predicted_eta_source")
+    private String predictedEtaSource;
+
+    @Column(name = "predicted_eta_confidence")
+    private String predictedEtaConfidence;
+
     public Booking() {
     }
 
@@ -204,6 +222,54 @@ public class Booking {
         this.deliveryVerificationSentAt = deliveryVerificationSentAt;
     }
 
+    public Integer getPredictedPickupEtaMinutes() {
+        return predictedPickupEtaMinutes;
+    }
+
+    public void setPredictedPickupEtaMinutes(Integer predictedPickupEtaMinutes) {
+        this.predictedPickupEtaMinutes = predictedPickupEtaMinutes;
+    }
+
+    public Integer getPredictedDeliveryEtaMinutes() {
+        return predictedDeliveryEtaMinutes;
+    }
+
+    public void setPredictedDeliveryEtaMinutes(Integer predictedDeliveryEtaMinutes) {
+        this.predictedDeliveryEtaMinutes = predictedDeliveryEtaMinutes;
+    }
+
+    public Integer getPredictedTotalEtaMinutes() {
+        return predictedTotalEtaMinutes;
+    }
+
+    public void setPredictedTotalEtaMinutes(Integer predictedTotalEtaMinutes) {
+        this.predictedTotalEtaMinutes = predictedTotalEtaMinutes;
+    }
+
+    public LocalDateTime getPredictedEtaGeneratedAt() {
+        return predictedEtaGeneratedAt;
+    }
+
+    public void setPredictedEtaGeneratedAt(LocalDateTime predictedEtaGeneratedAt) {
+        this.predictedEtaGeneratedAt = predictedEtaGeneratedAt;
+    }
+
+    public String getPredictedEtaSource() {
+        return predictedEtaSource;
+    }
+
+    public void setPredictedEtaSource(String predictedEtaSource) {
+        this.predictedEtaSource = predictedEtaSource;
+    }
+
+    public String getPredictedEtaConfidence() {
+        return predictedEtaConfidence;
+    }
+
+    public void setPredictedEtaConfidence(String predictedEtaConfidence) {
+        this.predictedEtaConfidence = predictedEtaConfidence;
+    }
+
     @Override
     public String toString() {
         return "Booking{" +
@@ -219,6 +285,11 @@ public class Booking {
                 ", createdAt=" + createdAt +
                 ", deliverAt=" + deliverAt +
                 ", vehicleType='" + vehicleType + '\'' +
+                ", predictedPickupEtaMinutes=" + predictedPickupEtaMinutes +
+                ", predictedDeliveryEtaMinutes=" + predictedDeliveryEtaMinutes +
+                ", predictedTotalEtaMinutes=" + predictedTotalEtaMinutes +
+                ", predictedEtaGeneratedAt=" + predictedEtaGeneratedAt +
+                ", predictedEtaSource='" + predictedEtaSource + '\'' +
                 ", deliveryVerificationExpiresAt=" + deliveryVerificationExpiresAt +
                 '}';
     }

@@ -113,6 +113,9 @@
             <p>Demand Factor: <span th:text="${pricingQuote.demandFactor}">[Demand Factor]</span>x</p>
             <p>Pricing Note: <span th:text="${pricingQuote.pricingMessage}">[Pricing Note]</span></p>
             <p>Area Insight: <span th:text="${pricingQuote.areaMessage}">[Area Insight]</span></p>
+            <p>Approx Delivery ETA: <span th:text="${etaQuote.totalEtaMinutes}">[ETA]</span> min</p>
+            <p>ETA Confidence: <span th:text="${etaQuote.confidence}">[Confidence]</span></p>
+            <p>ETA Note: <span th:text="${etaQuote.summaryMessage}">[ETA Note]</span></p>
             <p>Status: <span>Driver not allocated</span></p>
         </div>
 

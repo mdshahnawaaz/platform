@@ -1,0 +1,5 @@
+booking_id,created_at,delivered_at,vehicle_type,hour_of_day,day_of_week,is_weekend,trip_distance_km,driver_to_pickup_distance_km,demand_factor,driver_assigned,live_driver_location_used,predicted_pickup_eta_minutes,predicted_delivery_eta_minutes,predicted_total_eta_minutes,predicted_eta_source,predicted_eta_confidence,actual_total_duration_minutes,label_ready
+1,2026-04-11T13:58:23.275422,2026-04-12T21:44:46.306286,standard,13,6,true,1223.14,5907.34,1.00,true,false,,,,,,1906,true
+2,2026-04-11T13:59:16.718969,2026-04-12T21:45:44.712274,standard,13,6,true,1263.68,5908.22,1.00,true,false,,,,,,1906,true
+202,2026-04-18T11:54:11.537915,2026-04-18T11:57:29.772851,premium,11,6,true,107.15,6124.29,1.00,true,false,,,,,,3,true
+402,2026-04-20T19:37:01.583215,2026-04-20T19:45:22.892046,standard,19,1,false,10.66,6137.89,3.00,true,false,22602,40,22642,heuristic,MEDIUM,8,true

@@ -304,6 +304,7 @@
                 Revenue last 7 days
                 <strong th:text="${'Rs ' + #numbers.formatDecimal(dashboard.revenueLast7Days, 1, 2)}">Rs 0.00</strong>
                 <p class="helper">Average order value: <span th:text="${'Rs ' + #numbers.formatDecimal(dashboard.averageOrderValue, 1, 2)}">Rs 0.00</span></p>
+                <p class="helper" style="margin-top:10px;">ETA error: <span th:text="${dashboard.etaAccuracy.meanAbsoluteErrorMinutes} + ' min'">0 min</span></p>
             </aside>
         </section>
 
@@ -327,6 +328,11 @@
                 <span>Fulfillment rate</span>
                 <strong th:text="${dashboard.fulfillmentRate + '%'}">0%</strong>
                 <small class="helper">Completed trips as a share of total orders.</small>
+            </article>
+            <article class="metric-card">
+                <span>ETA within 10 min</span>
+                <strong th:text="${dashboard.etaAccuracy.withinTenMinutesRate + '%'}">0%</strong>
+                <small class="helper">Measured completion ETA accuracy.</small>
             </article>
         </section>
 
@@ -382,10 +388,83 @@
                                 <td>Total users</td>
                                 <td th:text="${dashboard.totalUsers}">0</td>
                             </tr>
+                            <tr>
+                                <td>ETA measured trips</td>
+                                <td th:text="${dashboard.etaAccuracy.measuredTrips}">0</td>
+                            </tr>
                         </tbody>
                     </table>
                 </section>
             </div>
+        </section>
+
+        <section class="content-grid">
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>ETA accuracy</h3>
+                        <p class="helper">Heuristic predictions are being collected now so the platform can train an ML ETA model after 2-4 weeks.</p>
+                    </div>
+                    <span class="badge">ML Ready</span>
+                </div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Measured trips</td>
+                            <td th:text="${dashboard.etaAccuracy.measuredTrips}">0</td>
+                        </tr>
+                        <tr>
+                            <td>Average predicted ETA</td>
+                            <td th:text="${dashboard.etaAccuracy.averagePredictedMinutes + ' min'}">0 min</td>
+                        </tr>
+                        <tr>
+                            <td>Average actual duration</td>
+                            <td th:text="${dashboard.etaAccuracy.averageActualMinutes + ' min'}">0 min</td>
+                        </tr>
+                        <tr>
+                            <td>Mean absolute error</td>
+                            <td th:text="${dashboard.etaAccuracy.meanAbsoluteErrorMinutes + ' min'}">0 min</td>
+                        </tr>
+                        <tr>
+                            <td>Trips within 10 minutes</td>
+                            <td th:text="${dashboard.etaAccuracy.withinTenMinutesRate + '%'}">0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>ETA rollout</h3>
+                        <p class="helper">Current product coverage and the path toward ML-backed prediction.</p>
+                    </div>
+                </div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>User before booking</td>
+                            <td>Approximate delivery ETA</td>
+                        </tr>
+                        <tr>
+                            <td>User after assignment</td>
+                            <td>Driver arrival plus delivery completion ETA</td>
+                        </tr>
+                        <tr>
+                            <td>Driver portal</td>
+                            <td>Pickup ETA and completion ETA</td>
+                        </tr>
+                        <tr>
+                            <td>Collection window</td>
+                            <td>2-4 weeks of predicted vs actual trip history</td>
+                        </tr>
+                        <tr>
+                            <td>Fallback strategy</td>
+                            <td>Heuristic ETA remains active whenever ML is unavailable</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
         </section>
 
         <section class="content-grid">
@@ -404,6 +483,7 @@
                             <th>Customer</th>
                             <th>Status</th>
                             <th>Driver</th>
+                            <th>Pred ETA</th>
                             <th>Value</th>
                         </tr>
                     </thead>
@@ -421,6 +501,7 @@
                                 </span>
                             </td>
                             <td th:text="${booking.driver != null ? booking.driver.name : 'Awaiting allocation'}">Driver</td>
+                            <td th:text="${booking.predictedTotalEtaMinutes != null ? booking.predictedTotalEtaMinutes + ' min' : '-'}">-</td>
                             <td th:text="${'Rs ' + #numbers.formatDecimal(booking.estimatedCost, 1, 2)}">Rs 0.00</td>
                         </tr>
                     </tbody>

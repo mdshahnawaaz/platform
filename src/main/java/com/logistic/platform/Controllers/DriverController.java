@@ -21,8 +21,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.logistic.platform.models.Booking;
 import com.logistic.platform.models.BookingStatus;
 import com.logistic.platform.models.Driver;
+import com.logistic.platform.models.EtaQuote;
 import com.logistic.platform.services.BookingService;
 import com.logistic.platform.services.DriverService;
+import com.logistic.platform.services.EtaPredictionService;
 
 @Controller
 @RequestMapping("/logistics/drivers")
@@ -38,6 +40,9 @@ public class DriverController {
 
     @Autowired
     private BookingService bookingService;
+
+    @Autowired
+    private EtaPredictionService etaPredictionService;
 
     @GetMapping("/portal")
     public String getDriverPortal(
@@ -162,6 +167,9 @@ public class DriverController {
                 .toList();
 
         Booking selectedBooking = resolveSelectedBooking(activeBookingList, selectedBookingId);
+        EtaQuote selectedBookingEta = selectedBooking != null
+                ? etaPredictionService.estimateForBooking(selectedBooking)
+                : null;
 
         long activeBookings = activeBookingList.size();
         long completedBookings = bookingHistory.size();
@@ -175,6 +183,7 @@ public class DriverController {
         model.addAttribute("activeBookingList", activeBookingList);
         model.addAttribute("bookingHistory", bookingHistory);
         model.addAttribute("selectedBooking", selectedBooking);
+        model.addAttribute("selectedBookingEta", selectedBookingEta);
         model.addAttribute("activeBookings", activeBookings);
         model.addAttribute("completedBookings", completedBookings);
         model.addAttribute("totalEarnings", totalEarnings);
