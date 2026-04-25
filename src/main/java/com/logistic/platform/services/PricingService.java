@@ -15,6 +15,13 @@ public class PricingService {
     public static final BigDecimal BASE_RATE = new BigDecimal("5.00");
     public static final BigDecimal STANDARD_COST_PER_KM = new BigDecimal("2.00");
     public static final BigDecimal PREMIUM_COST_PER_KM = new BigDecimal("3.00");
+    private static final double DEMAND_ZONE_RADIUS_KM = 2.5;
+    private static final TestDemandZone HIGH_DEMAND_ZONE =
+            new TestDemandZone("Koramangala Hub", 12.9352, 77.6245, new BigDecimal("1.45"));
+    private static final TestDemandZone MEDIUM_DEMAND_ZONE =
+            new TestDemandZone("Indiranagar Core", 12.9719, 77.6412, new BigDecimal("1.10"));
+    private static final TestDemandZone LOW_DEMAND_ZONE =
+            new TestDemandZone("Yelahanka Edge", 13.1005, 77.5963, new BigDecimal("0.88"));
 
     private final DemandPredictionService demandPredictionService;
 
@@ -30,18 +37,33 @@ public class PricingService {
             String vehicleType,
             Double demandFactorOverride) {
         double distance = DistanceCalculator.calculateDistance(pickupLat, pickupLon, dropoffLat, dropoffLon);
-        return buildQuote(distance, vehicleType, demandFactorOverride);
+        return buildQuote(distance, pickupLat, pickupLon, vehicleType, demandFactorOverride);
     }
 
     public PricingQuote buildQuote(double distance, String vehicleType, Double demandFactorOverride) {
+        return buildQuote(distance, null, null, vehicleType, demandFactorOverride);
+    }
+
+    private PricingQuote buildQuote(
+            double distance,
+            Double pickupLat,
+            Double pickupLon,
+            String vehicleType,
+            Double demandFactorOverride) {
         DemandPrediction demandPrediction = demandPredictionService.predictDemand(vehicleType);
+        TestDemandZone matchedZone = findTestDemandZone(pickupLat, pickupLon);
         BigDecimal effectiveDemandFactor = demandFactorOverride != null
                 ? BigDecimal.valueOf(demandFactorOverride).setScale(2, RoundingMode.HALF_UP)
+                : matchedZone != null
+                        ? matchedZone.demandFactor()
                 : demandPrediction.demandFactor();
         BigDecimal costPerKm = getCostPerKm(vehicleType);
         BigDecimal estimatedPrice = calculatePrice(distance, costPerKm, effectiveDemandFactor);
         String demandLevel = classifyDemandLevel(effectiveDemandFactor);
         BigDecimal priceAdjustmentPercent = calculateAdjustmentPercent(effectiveDemandFactor);
+        String modelSource = matchedZone != null && demandFactorOverride == null
+                ? "test-zone:" + matchedZone.name()
+                : demandPrediction.modelSource();
 
         return new PricingQuote(
                 round(distance),
@@ -52,10 +74,10 @@ public class PricingService {
                 demandPrediction.predictedDemand(),
                 demandLevel,
                 effectiveDemandFactor.compareTo(new BigDecimal("1.25")) >= 0,
-                demandPrediction.modelSource(),
+                modelSource,
                 priceAdjustmentPercent,
                 buildPricingMessage(demandLevel, priceAdjustmentPercent),
-                buildAreaMessage(demandLevel),
+                buildAreaMessage(demandLevel, matchedZone),
                 estimatedPrice);
     }
 
@@ -85,7 +107,7 @@ public class PricingService {
         if (demandFactor.compareTo(new BigDecimal("0.95")) <= 0) {
             return "LOW";
         }
-        return "NORMAL";
+        return "MEDIUM";
     }
 
     private BigDecimal calculateAdjustmentPercent(BigDecimal demandFactor) {
@@ -103,22 +125,49 @@ public class PricingService {
             return "Demand is currently low, so this trip includes a "
                     + adjustmentPercent.abs().toPlainString() + "% discount.";
         }
-        return "Demand is normal right now, so standard pricing is being applied.";
+        return "Demand is moderate right now, so standard pricing is being applied.";
     }
 
-    private String buildAreaMessage(String demandLevel) {
+    private String buildAreaMessage(String demandLevel, TestDemandZone matchedZone) {
+        if (matchedZone != null) {
+            return "Matched test demand zone: " + matchedZone.name() + ".";
+        }
         if ("HIGH".equals(demandLevel)) {
             return "This route is in a high demand area with heavier booking activity.";
         }
         if ("LOW".equals(demandLevel)) {
             return "This route is in a low demand area, so fares are more affordable right now.";
         }
-        return "This route is in a normal demand area with balanced pricing.";
+        return "This route is in a medium demand area with balanced pricing.";
+    }
+
+    private TestDemandZone findTestDemandZone(Double pickupLat, Double pickupLon) {
+        if (pickupLat == null || pickupLon == null) {
+            return null;
+        }
+        if (isInsideZone(pickupLat, pickupLon, HIGH_DEMAND_ZONE)) {
+            return HIGH_DEMAND_ZONE;
+        }
+        if (isInsideZone(pickupLat, pickupLon, MEDIUM_DEMAND_ZONE)) {
+            return MEDIUM_DEMAND_ZONE;
+        }
+        if (isInsideZone(pickupLat, pickupLon, LOW_DEMAND_ZONE)) {
+            return LOW_DEMAND_ZONE;
+        }
+        return null;
+    }
+
+    private boolean isInsideZone(double pickupLat, double pickupLon, TestDemandZone zone) {
+        return DistanceCalculator.calculateDistance(pickupLat, pickupLon, zone.latitude(), zone.longitude())
+                <= DEMAND_ZONE_RADIUS_KM;
     }
 
     private double round(double value) {
         return BigDecimal.valueOf(value)
                 .setScale(2, RoundingMode.HALF_UP)
                 .doubleValue();
+    }
+
+    private record TestDemandZone(String name, double latitude, double longitude, BigDecimal demandFactor) {
     }
 }

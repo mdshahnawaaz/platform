@@ -155,7 +155,7 @@
             color: #ff8c7a;
         }
 
-        .demand-normal {
+        .demand-medium {
             background: rgba(74, 144, 226, 0.2);
             color: #7db8ff;
         }
@@ -254,7 +254,7 @@
                 } else if (quote.demandLevel === 'LOW') {
                     demandBadge.classList.add('demand-low');
                 } else {
-                    demandBadge.classList.add('demand-normal');
+                    demandBadge.classList.add('demand-medium');
                 }
 
                 document.getElementById('hiddenPickupLat').value = pickupLat;
@@ -316,8 +316,8 @@
 
         <div id="quoteCard" class="quote-card" style="display: none;">
             <h3>Fare Breakdown</h3>
-            <span id="quoteDemandBadge" class="demand-badge demand-normal">
-                <span id="quoteDemandLevel">NORMAL DEMAND</span>
+            <span id="quoteDemandBadge" class="demand-badge demand-medium">
+                <span id="quoteDemandLevel">MEDIUM DEMAND</span>
             </span>
             <div class="quote-row"><span>Distance</span><span id="quoteDistance">-</span></div>
             <div class="quote-row"><span>Vehicle</span><span id="quoteVehicleType">-</span></div>
