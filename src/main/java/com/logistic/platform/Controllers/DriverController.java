@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.logistic.platform.Configuration.PortalAuthenticationService;
+import com.logistic.platform.Configuration.PortalPrincipal;
 import com.logistic.platform.models.Booking;
 import com.logistic.platform.models.BookingStatus;
 import com.logistic.platform.models.Driver;
@@ -29,8 +34,6 @@ import com.logistic.platform.services.EtaPredictionService;
 @Controller
 @RequestMapping("/logistics/drivers")
 public class DriverController {
-
-    private static final String DRIVER_SESSION_KEY = "loggedInDriverId";
 
     // @Autowired
     // private KafkaService kafkaService;
@@ -44,19 +47,21 @@ public class DriverController {
     @Autowired
     private EtaPredictionService etaPredictionService;
 
+    @Autowired
+    private PortalAuthenticationService portalAuthenticationService;
+
     @GetMapping("/portal")
     public String getDriverPortal(
             @RequestParam(required = false) Integer bookingId,
-            HttpSession session,
+            Authentication authentication,
             Model model) {
-        Integer driverId = (Integer) session.getAttribute(DRIVER_SESSION_KEY);
-        if (driverId == null) {
+        PortalPrincipal principal = extractDriverPrincipal(authentication);
+        if (principal == null) {
             return "driver_login";
         }
 
-        Optional<Driver> driverOpt = driverService.getDriver(driverId);
+        Optional<Driver> driverOpt = driverService.getDriver(principal.id());
         if (driverOpt.isEmpty()) {
-            session.invalidate();
             model.addAttribute("errorMessage", "Driver session expired. Please log in again.");
             return "driver_login";
         }
@@ -69,34 +74,42 @@ public class DriverController {
     public String loginDriver(
             @RequestParam int driverId,
             @RequestParam String licenseNumber,
-            HttpSession session,
+            HttpServletRequest request,
+            HttpServletResponse response,
             RedirectAttributes redirectAttributes) {
-        return driverService.authenticateDriver(driverId, licenseNumber)
-                .map(driver -> {
-                    session.setAttribute(DRIVER_SESSION_KEY, driver.getId());
-                    return "redirect:/logistics/drivers/portal";
-                })
-                .orElseGet(() -> {
-                    redirectAttributes.addFlashAttribute("errorMessage", "Invalid driver ID or license number.");
-                    return "redirect:/logistics/drivers/portal";
-                });
+        try {
+            portalAuthenticationService.authenticate("driver", String.valueOf(driverId), licenseNumber, request, response);
+            return "redirect:/logistics/drivers/portal";
+        } catch (AuthenticationException exception) {
+            redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
+            return "redirect:/logistics/drivers/portal";
+        }
     }
 
     @PostMapping("/logout")
-    public String logoutDriver(HttpSession session) {
-        session.invalidate();
+    public String logoutDriver(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication) {
+        portalAuthenticationService.logout(request, response, authentication);
         return "redirect:/logistics/drivers/portal";
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Driver> getDriver(@PathVariable int id) {
+    public ResponseEntity<Driver> getDriver(@PathVariable int id, Authentication authentication) {
+        if (!canAccessDriver(authentication, id)) {
+            return ResponseEntity.status(403).build();
+        }
         return driverService.getDriver(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/{id}/accept-booking")
-    public ResponseEntity<String> acceptBooking(@PathVariable int id, @RequestBody Booking booking) {
+    public ResponseEntity<String> acceptBooking(@PathVariable int id, @RequestBody Booking booking, Authentication authentication) {
+        if (!canAccessDriver(authentication, id)) {
+            return ResponseEntity.status(403).body("Forbidden");
+        }
         boolean accepted = driverService.acceptBooking(id, booking);
         if (accepted) {
             return ResponseEntity.ok("Booking accepted");
@@ -106,7 +119,10 @@ public class DriverController {
     }
 
     @PutMapping("/{id}/update-status")
-    public ResponseEntity<String> updateJobStatus(@PathVariable int id, @RequestParam String status) {
+    public ResponseEntity<String> updateJobStatus(@PathVariable int id, @RequestParam String status, Authentication authentication) {
+        if (!canAccessDriver(authentication, id)) {
+            return ResponseEntity.status(403).body("Forbidden");
+        }
         boolean updated = driverService.updateJobStatus(id, status);
         if (updated) {
             return ResponseEntity.ok("Status updated");
@@ -119,7 +135,12 @@ public class DriverController {
     public String sendCompletionCode(
             @PathVariable int driverId,
             @PathVariable int bookingId,
+            Authentication authentication,
             RedirectAttributes redirectAttributes) {
+        if (!canAccessDriver(authentication, driverId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "You are not allowed to access that driver account.");
+            return "redirect:/logistics/drivers/portal";
+        }
         try {
             driverService.sendDeliveryCompletionCode(driverId, bookingId);
             redirectAttributes.addFlashAttribute("successMessage", "Verification code sent to the user email.");
@@ -134,7 +155,12 @@ public class DriverController {
             @PathVariable int driverId,
             @PathVariable int bookingId,
             @RequestParam String verificationCode,
+            Authentication authentication,
             RedirectAttributes redirectAttributes) {
+        if (!canAccessDriver(authentication, driverId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "You are not allowed to access that driver account.");
+            return "redirect:/logistics/drivers/portal";
+        }
         try {
             driverService.completeBookingWithVerification(driverId, bookingId, verificationCode);
             redirectAttributes.addFlashAttribute("successMessage", "Booking completed successfully. Driver is now available for the next booking.");
@@ -146,7 +172,10 @@ public class DriverController {
 
 
     @GetMapping("/{id}/allbooking")
-    public String getMethodName(@PathVariable int id,Model model) {
+    public String getMethodName(@PathVariable int id, Authentication authentication, Model model) {
+        if (!canAccessDriver(authentication, id)) {
+            return "redirect:/logistics/drivers/portal";
+        }
         Driver driver = driverService.getDriver(id).orElse(null);
         if (driver == null) {
             model.addAttribute("driver", null);
@@ -218,4 +247,22 @@ public class DriverController {
     //     return new ResponseEntity<>(Map.of("message","Location updated"),HttpStatus.OK);
     // }
 
+    private PortalPrincipal extractDriverPrincipal(Authentication authentication) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof PortalPrincipal principal) || !principal.isDriver()) {
+            return null;
+        }
+        return principal;
+    }
+
+    private boolean canAccessDriver(Authentication authentication, int driverId) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return false;
+        }
+        if (authentication.getAuthorities().stream().anyMatch(item -> "ROLE_ADMIN".equals(item.getAuthority()))) {
+            return true;
+        }
+        PortalPrincipal principal = extractDriverPrincipal(authentication);
+        return principal != null && principal.id() != null && principal.id() == driverId;
+    }
+    
 }

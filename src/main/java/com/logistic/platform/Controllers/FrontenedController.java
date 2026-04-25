@@ -4,7 +4,10 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.logistic.platform.Configuration.PortalAuthenticationService;
+import com.logistic.platform.Configuration.PortalPrincipal;
 import com.logistic.platform.models.AdminDashboardData;
 import com.logistic.platform.models.Booking;
 import com.logistic.platform.models.BookingStatus;
@@ -24,26 +29,30 @@ import com.logistic.platform.repository.UserRepository;
 @Controller
 public class FrontenedController {
 
-    private static final String USER_SESSION_KEY = "loggedInUserId";
-
     private final AdminService adminService;
     private final UserRepository userRepository;
     private final BookingService bookingService;
+    private final PortalAuthenticationService portalAuthenticationService;
 
-    public FrontenedController(AdminService adminService, UserRepository userRepository, BookingService bookingService) {
+    public FrontenedController(
+            AdminService adminService,
+            UserRepository userRepository,
+            BookingService bookingService,
+            PortalAuthenticationService portalAuthenticationService) {
         this.adminService = adminService;
         this.userRepository = userRepository;
         this.bookingService = bookingService;
+        this.portalAuthenticationService = portalAuthenticationService;
     }
     
     @GetMapping("/hi")
-    public String showsoc(HttpSession session, Model model)
+    public String showsoc(Authentication authentication, Model model)
     {
-        Integer userId = (Integer) session.getAttribute(USER_SESSION_KEY);
-        if (userId == null) {
+        PortalPrincipal principal = extractUserPrincipal(authentication);
+        if (principal == null) {
             return "redirect:/portal/user";
         }
-        model.addAttribute("loggedInUserId", userId);
+        model.addAttribute("loggedInUserId", principal.id());
         return "user_fro"; 
     }
 
@@ -60,15 +69,15 @@ public class FrontenedController {
     }
 
     @GetMapping("/portal/user")
-    public String userPortal(HttpSession session, Model model) {
-        Integer userId = (Integer) session.getAttribute(USER_SESSION_KEY);
-        if (userId == null) {
+    public String userPortal(Authentication authentication, Model model) {
+        PortalPrincipal principal = extractUserPrincipal(authentication);
+        if (principal == null) {
             return "user_login";
         }
 
+        int userId = principal.id();
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
-            session.invalidate();
             model.addAttribute("errorMessage", "User session expired. Please log in again.");
             return "user_login";
         }
@@ -104,24 +113,24 @@ public class FrontenedController {
     public String loginUser(
             @RequestParam int userId,
             @RequestParam String email,
-            HttpSession session,
+            HttpServletRequest request,
+            HttpServletResponse response,
             RedirectAttributes redirectAttributes) {
-        return userRepository.findById(userId)
-                .filter(user -> user.getEmail() != null)
-                .filter(user -> user.getEmail().equalsIgnoreCase(email.trim()))
-                .map(user -> {
-                    session.setAttribute(USER_SESSION_KEY, user.getId());
-                    return "redirect:/portal/user";
-                })
-                .orElseGet(() -> {
-                    redirectAttributes.addFlashAttribute("errorMessage", "Invalid user ID or email.");
-                    return "redirect:/portal/user";
-                });
+        try {
+            portalAuthenticationService.authenticate("user", String.valueOf(userId), email, request, response);
+            return "redirect:/portal/user";
+        } catch (AuthenticationException exception) {
+            redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
+            return "redirect:/portal/user";
+        }
     }
 
     @PostMapping("/portal/user/logout")
-    public String logoutUser(HttpSession session) {
-        session.removeAttribute(USER_SESSION_KEY);
+    public String logoutUser(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication) {
+        portalAuthenticationService.logout(request, response, authentication);
         return "redirect:/portal/user";
     }
 
@@ -157,6 +166,13 @@ public class FrontenedController {
     @GetMapping("/logistics/eco_friendly")
     public String eco_Friendlyt() {
         return "eco_friendly";
+    }
+
+    private PortalPrincipal extractUserPrincipal(Authentication authentication) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof PortalPrincipal principal) || !principal.isUser()) {
+            return null;
+        }
+        return principal;
     }
     
 }

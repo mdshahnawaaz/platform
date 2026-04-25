@@ -2,6 +2,7 @@ package com.logistic.platform.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.logistic.platform.Configuration.PortalPrincipal;
 import com.logistic.platform.models.Booking;
 import com.logistic.platform.models.BookingCreationResult;
 import com.logistic.platform.models.EtaQuote;
@@ -37,9 +39,11 @@ public class BookingController {
                                                     @RequestParam double dropoffLat,
                                                     @RequestParam double dropoffLon,
                                                     @RequestParam String vehicleType,
+                                                    Authentication authentication,
                                                     Model model) {    
+        int effectiveUserId = resolveUserId(authentication, userId);
         BookingCreationResult bookingCreationResult = bookingService.createBooking(
-                userId,
+                effectiveUserId,
                 pickupLat,
                 pickupLon,
                 dropoffLat,
@@ -85,6 +89,13 @@ public class BookingController {
     public ResponseEntity<Booking> updateBookingStatus(@PathVariable int id, @RequestParam String status) {
         Booking updatedBooking = bookingService.updateBookingStatus(id, status);
         return ResponseEntity.ok(updatedBooking);
+    }
+
+    private int resolveUserId(Authentication authentication, int fallbackUserId) {
+        if (authentication != null && authentication.getPrincipal() instanceof PortalPrincipal principal && principal.isUser() && principal.id() != null) {
+            return principal.id();
+        }
+        return fallbackUserId;
     }
     
     
